@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="Ju Lee's Analog ICs - Categories" />
+        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
         <meta name="author" content="Ju Lee" />
-        <title>VCO Talks - Ju Lee's Blog</title>
+        <title>Ju Lee - Analysis of LC Tank</title>
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -52,12 +52,12 @@
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>VCO Talk</h1>
-                            <h2 class="subheading">Talks about Voltage Controlled Oscillator</h2>
+                            <h1>Analysis of LC Tank</h1>
+                            <h2 class="subheading">How to extract \( Q \), \( C_{eff} \), \( L_{eff} \) and \( R_P \)</h2>
                             <span class="meta">
                                 Posted by
                                 <a href="../#!">Ju Lee</a>
-                                on October 22, 2024
+                                on October 18, 2024
                             </span>
                         </div>
                     </div>
@@ -69,32 +69,26 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <div class="post-preview">
-                            <a href="../category_vco/Ideal_and_Lossy_LC_Tank_Analysis_i.html">
-                                <h2 class="post-title">Ideal and Lossy LC Tank Analysis (I)</h2>
-                                <h3 class="post-subtitle">#Small Signal #Differential Equation</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="../#!">Ju Lee</a>
-                                on Oct 19, 2024
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" /> 
-                        <div class="post-preview">
-                            <a href="../category_vco/Analysis_of_LC_Tank.html">
-                                <h2 class="post-title">Analysis of LC Tank</h2>
-                                <h3 class="post-subtitle">#Quality Factor #Effective Capacitance #Effective Inductance</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="../#!">Ju Lee</a>
-                                on Oct 18, 2024
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" />    
+                        <p>為了 LC Tank 的對稱性，我們可以使用兩個大電阻分別偏壓 LC Tank 的兩端，
+                            並聯 AC 電流源後可模擬其 AC Impedance Response。</p>
+                        <a href="#!"><img class="img-fluid" src="../assets/img/VCO/LC_Tank_Impedance_20241018.jpg" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 1. LC Tank Impedance AC Response Example</span>
+                        <p>由 AC Response 的峰值可以萃取 LC Tank 中等效的並聯電阻</p>
+                        <center><p>\( R_P=peak\{Impedance\} \)</p></center>
+                        <p>峰值時刻的頻率為 LC Tank 的諧振頻率</p>
+                        <center><p>\( \omega_0=\frac{1}{\sqrt{LC}} \)</p></center>
+                        <p>以諧振頻率為中心，往左右各衰減 3dB 可以得到頻寬 \( \omega_{bw} \)</p>
+                        <p>諧振頻率 \( \omega_0 \) 除以頻寬 \( \omega_{bw} \) 可以得到 LC Tank 的 Quality Factor \( Q \)</p>
+                        <center><p>\( Q=\frac{\omega_0}{\omega_{bw}} \)</p></center>
+                        <p>由於 Quality Factor Q 為並聯電阻、諧振頻率、並聯電容，三者的乘積，可以
+                            反推等效的並聯電容大小 \( C_{eff} \)</p>
+                        <center><p>\( C_{eff}=\frac{Q}{\omega_0 R_P} \)</p></center>
+                        <p>接著可以由等效並聯電容和諧振頻率反推等效的並聯電感值 \( L_{eff} \)</p>
+                        <center><p>\( L_{eff}=\frac{1}{\omega_0^2 C_{eff}} \)</p></center>
+                        <p>
+                            References:
+                            <a href="https://www.rfinsights.com/insights/design/concepts/quality-factor-and-bandwidth/">A Journey from Resonance to Impedance Matching</a>
+                        </p>
                     </div>
                 </div>
             </div>

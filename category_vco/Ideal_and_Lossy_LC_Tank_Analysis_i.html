@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="Ju Lee's Analog ICs - Categories" />
+        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
         <meta name="author" content="Ju Lee" />
-        <title>VCO Talks - Ju Lee's Blog</title>
+        <title>Ju Lee - Ideal and Lossy LC Tank Analysis (I)</title>
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -52,12 +52,12 @@
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>VCO Talk</h1>
-                            <h2 class="subheading">Talks about Voltage Controlled Oscillator</h2>
+                            <h1>Ideal and Lossy LC Tank Analysis (I)</h1>
+                            <h2 class="subheading">Small Signal Analysis and 2nd Order Differential Equation</h2>
                             <span class="meta">
                                 Posted by
                                 <a href="../#!">Ju Lee</a>
-                                on October 22, 2024
+                                on October 19, 2024
                             </span>
                         </div>
                     </div>
@@ -69,32 +69,46 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <div class="post-preview">
-                            <a href="../category_vco/Ideal_and_Lossy_LC_Tank_Analysis_i.html">
-                                <h2 class="post-title">Ideal and Lossy LC Tank Analysis (I)</h2>
-                                <h3 class="post-subtitle">#Small Signal #Differential Equation</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="../#!">Ju Lee</a>
-                                on Oct 19, 2024
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" /> 
-                        <div class="post-preview">
-                            <a href="../category_vco/Analysis_of_LC_Tank.html">
-                                <h2 class="post-title">Analysis of LC Tank</h2>
-                                <h3 class="post-subtitle">#Quality Factor #Effective Capacitance #Effective Inductance</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="../#!">Ju Lee</a>
-                                on Oct 18, 2024
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" />    
+                        <a href="#!"><img class="img-fluid" src="../assets/img/VCO/Ideal_LC_Tank_20241019.png" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 1. An Ideal LC Tank</span>
+                        <p>對一個 Ideal LC Tank 而言，假設初始狀態為電容 \(C\) 上有一跨壓 \(V_0\)，流經電感
+                            \(L\) 的電流為 0A，則我們可以寫出以下方程式:</p>
+                        <center><p>\( I_{out}=-C\frac{dV_{out}}{dt} \)</p></center>
+                        <center><p>\( V_{out}=L\frac{dI_{out}}{dt} \)</p></center>
+                        <center><p>\( V_{out}(0)=V_0 \)</p></center>
+                        <center><p>\( I_{out}(0)=0 \)</p></center>
+                        <p>在一開始的時刻，\(L\) 會傾向讓 \(C\) 放電，電流開始增加，跨壓開始降低，此時儲
+                            存在電容上的能量逐漸轉移至電感上，其中，電容和電感的能量可表示為 :</p>
+                        <center><p>\( E_C=\frac{1}{2}CV_{out}^2 \)</p></center>
+                        <center><p>\( E_L=\frac{1}{2}LI_{out}^2 \)</p></center>
+                        <p>當 LC Tank 的跨壓降至 0V 時，所有的能量轉移至電感上，此時輸出電流達到
+                            最大值。接著電感上的電流開始對電容充電，逐漸將能量還給電容，此時電流
+                            開始下降，跨壓開始提高，如此反覆形成週期。</p>
+                        <p>當我們嘗試解此方程式時會得到一個二階微分方程式，以及兩個 Initial
+                            Condition :</p>
+                        <center><p>\( LC\frac{dV_{out}^2}{dt}+V_{out}=0 \)</p></center>
+                        <center><p>\( V_{out}(0)=V_0 \)</p></center>
+                        <center><p>\( I_{out}(0)=0 \)</p></center>
+                        <p>考慮二階微分方程式 :</p>
+                        <center><p>\( a\frac{d^2y}{dt}+b\frac{dy}{dt}+cy=0 \)</p></center>
+                        <center><p>\( y(0)=k_1, y'(0)=k_2 \)</p></center>
+                        <p>可以得到三種型式的可能解 :</p>
+                        <center><p>\( \left\{\begin{matrix}b^2-4ac>0\rightarrow y(t)=A_1e^{S_1t}+A_2e^{S_2t}\\b^2-4ac=0\rightarrow y(t)=A_1e^{S_1t}+A_2te^{S_1t}\\b^2-4ac<0\rightarrow y(t)=A_1e^{\alpha t}cos\omega_1t+A_2e^{\alpha t}sin\omega_1t\end{matrix}\right. \)</p></center>
+                        <center><p>\( S_{1, 2}=\frac{-b \pm \sqrt{b^2-4ac}}{2a} \)</p></center>
+                        <center><p>\( \alpha =Re\{S_{1, 2}\} \)</p></center>
+                        <center><p>\( \omega_1 =Im\{S_{1, 2}\} \)</p></center>
+                        <p>回到一開始的 LC Tank 2nd Order Differential Equation，可以得到 :</p>
+                        <center><p>\( S_{1, 2} =\pm j\frac{1}{\sqrt{LC}} \)</p></center>
+                        <center><p>\( V_{out}(t)=A_1cos\omega_1t+A_2sin\omega_1t \)</p></center>
+                        <center><p>\( \omega_1 =\frac{1}{\sqrt{LC}} \)</p></center>
+                        <p>帶入 Initial Condition 後可以得到係數，故 :</p>
+                        <center><p>\( V_{out}(t)=V_0cos(\frac{1}{\sqrt{LC}})t \)</p></center>
+                        <p>震盪頻率為 :</p>
+                        <center><p>\( \frac{1}{\sqrt{LC}} (rad/s)=\frac{1}{2\pi\sqrt{LC}} (Hz) \)</p></center>
+                        <p>
+                            References:
+                            <a href="https://youtu.be/iuJ31nLoS4s?si=DsSNTUV0GhIAZOVq">Razavi Basic Circuits Lec 28: Simple LC Circuit; 2nd-Order Diff. Equations</a>
+                        </p>
                     </div>
                 </div>
             </div>
