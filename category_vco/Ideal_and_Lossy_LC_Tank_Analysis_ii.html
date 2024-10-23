@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="Ju Lee's Analog ICs - Categories" />
+        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
         <meta name="author" content="Ju Lee" />
-        <title>ADC Talks - Ju Lee's Blog</title>
+        <title>Ju Lee - Ideal and Lossy LC Tank Analysis (II)</title>
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -47,17 +47,17 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('../assets/img/adc.png')">
+        <header class="masthead" style="background-image: url('../assets/img/vco.png')">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>ADC Talk</h1>
-                            <h2 class="subheading">Talks about Analog to Digital Converter</h2>
+                            <h1>Ideal and Lossy LC Tank Analysis (II)</h1>
+                            <h2 class="subheading">Small Signal Analysis and 2nd Order Differential Equation</h2>
                             <span class="meta">
                                 Posted by
                                 <a href="../#!">Ju Lee</a>
-                                on October 22, 2024
+                                on October 19, 2024
                             </span>
                         </div>
                     </div>
@@ -69,19 +69,37 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <div class="post-preview">
-                            <a href="../category_ldo/LDO_Reference_Voltage_for_LC_VCO.html">
-                                <h2 class="post-title">LDO Reference Voltage for LC VCO</h2>
-                                <h3 class="post-subtitle">#起震條件 #Process #Voltage #Tracking</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="../#!">Ju Lee</a>
-                                on Oct 15, 2024
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" />    
+                        <p>對一個 Lossy LC Tank 而言，等效的並聯電組在 LC Tank 跨壓不為 0V 的時候都
+                            會消耗能量，進而導致最後在 LC Tank 上的跨壓逐漸下降至 0V。</p>
+                        <p>使用 KCL，我們可以得到 :</p>
+                        <center><p>\( C\frac{dV_{out}}{dt}+\frac{1}{L} \int_{t}^{0}V_{out}dt+\frac{V_{out}}{R}=0 \)</p></center>
+                        <center><p>\( V_{out}(0)=V_0, I_L(0)=0 \)</p></center>
+                        <p>解此二階微分方程可以得到三種可能結果，解方程式的方式可以參考上一篇討論 :</p>
+                        <p>
+                            <a href="Ideal_and_Lossy_LC_Tank_Analysis_i.html">Ideal and Lossy LC Tank Analysis (I)</a>
+                        </p>
+                        <p>根據微分方程式的 Characteristic Equation 解出 :</p>
+                        <center><p>\( S_{1, 2}=-\frac{1}{2RC}\pm \sqrt{\frac{1}{R^2C^2}+\frac{4}{LC}} \)</p></center>
+                        <p>值得注意的是，若此兩根皆為不同的實數，則兩根永遠小於 0，且 LC Tank 的
+                            跨壓為 :</p>
+                        <center><p>\( V_{out}(t)=A_1e^{S_1t}+A_2e^{S_2t} \)</p></center>
+                        <p>這意味著此 LC Tank 上的跨壓會隨著時間 Exponentially Decay，最終趨近於
+                             0V。</p>
+                        <p>若此兩根為相同的實數，則 LC Tank 的跨壓為 :</p>
+                        <center><p>\( V_{out}(t)=A_1e^{S_1t}+A_2te^{S_1t} \)</p></center>
+                        <p>跨壓為一個 Exponentially Decay 的函數加上一個 Exponentially Decay 的函
+                            數乘上 Ramp 函數，最終仍然會趨近於 0V。</p>
+                        <p>若此兩根為虛數，則 LC Tank 的跨壓為 :</p>
+                        <center><p>\( V_{out}(t)=A_1e^{\alpha t}cos\omega_1t+A_2e^{\alpha t}sin\omega_1t \)</p></center>
+                        <p>帶入 Initial Condition 後可以化簡為 :</p>
+                        <center><p>\( V_{out}(t)=A_1e^{\alpha t}cos\omega_1t \)</p></center>
+                        <p>跨壓為一個 Amplitude 隨時間 Exponentially Decay 的 cos 函數，最終也會趨
+                            近於 0V。</p>
+                        
+                        <p>
+                            References:
+                            <a href="https://youtu.be/D_vK68ZrZOM?si=aE0aEwT-r1OCACbr">Razavi Basic Circuits Lec 29: Ideal and Lossy LC Tanks</a>
+                        </p>
                     </div>
                 </div>
             </div>
