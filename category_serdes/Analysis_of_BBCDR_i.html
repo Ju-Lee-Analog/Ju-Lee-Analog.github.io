@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
+        <meta name="author" content="Ju Lee" />
+        <title>Ju Lee - Analysis of Bang-Band CDR (I)</title>
+        <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../index.html">Ju Lee's Analog ICs</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../about.html">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="../category_serdes/category_serdes.html">Serdes</a></li>
+                                <li><a class="dropdown-item" href="../category_vco/category_vco.html">VCO</a></li>
+                                <li><a class="dropdown-item" href="../category_ldo/category_ldo.html">LDO</a></li>
+                                <li><a class="dropdown-item" href="../category_adc/category_adc.html">ADC</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('../assets/img/serdes.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Analysis of Bang-Bang CDR (I)</h1>
+                            <h2 class="subheading">Linearization of Bang-Bang PD</h2>
+                            <span class="meta">
+                                Posted by
+                                <a href="../#!">Ju Lee</a>
+                                on October 24, 2024
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <h2>PD Metastability 對 PD 的線性化</h2>
+                        <p>一個理想的 Bang-Bang Phase Detector 在 Phase Error 趨近於 \(0^+\) 的時候會
+                            輸出 High，反之，在趨近於 \(0^-\) 的時候會輸出 Low，但 Phase Detector 本身
+                            的亞穩態會使得 BBPD 的 PD Curve 在 Phase Error 較小的時候，增益不是無
+                            窮大，也就是變得平緩。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/CML_Latch_20241024.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. Conventional Current Steering Latch</span>
+                        <p>Fig. 1 為一個傳統的 Latch 電路，當 \(CK\) 為 High 時，Latch 對 \(D_{in}\) 做 
+                            Sample，當 \(CK\) 為 Low 時，Latch 對輸出做 Regeneration。</p>
+                        <p>根據 \(D_{in}\) 的 Zero Crossing 點和 \(CK\) 由 Low 轉 High 的時間差 \(\Delta T\) ，我們可
+                            以得到三種輸出時域圖 :</p>
+                        <a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Latch_Time_Output_20241024.png" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 2. Three Cases of Latch Output</span>
+                        <p>Fig. 2 (a) 說明 \(D_{in}\) 在 Sampling 階段的準備時間夠長，使得 Latch 輸出可以飽
+                            和，使得在 Regeneration 階段時 Latch 的輸出不再變化。</p>
+                        <center><p> \(V_F=I_{SS}R_C\) </p></center>
+                        <p>Fig. 2 (b> 說明 \(D_{in}\) 在 Sampling 階段的準備時間不夠長，但 Latch 在
+                             Regeneration 階段仍然有足夠的時間 (也就是半個 Clock Period) 可以讓輸出
+                             飽和電壓  \(V_F\) 。</p>
+                        <p>我們假設 \(D_{in}\) 變化的斜率為 \(2k\)，Latch Sampling 階段的增益為 \(A_{pre}\)，則在
+                             Sampling 結束時刻的輸出為 :</p>
+                        <center><p> \(2k\Delta TA_{pre}\) </p></center>
+                        <p>Fig. 3 (c) 說明 \(D_{in}\) 在 Sampling 階段的準備時間不夠長，Regeneration 階段也
+                            沒有足夠的時間讓輸出飽和至 \(V_F\)，若 Regeneration 的 Time Constant 為 \(\tau_{reg}\) 
+                            ，則此時最終的輸出電壓為 :</p>
+                        <center><p> \(2k\Delta TA_{pre}e^{\frac{T_b/2}{\tau_{reg}}}\) </p></center>
+                        <p>由於 Latch (或者 PD) 的平均輸出為 \(V_X-V_Y\) 在 Regeneration 下的平均電壓除
+                            以一個 Clock Period，我們可以得到 Fig. 2 (c) 的 PD 平均輸出電壓和 \(\Delta T\) 
+                            的關係 \(\overline{V_{PD,meta}}(\Delta T)\) :</p>
+                        <center><p> \(\overline{V_{PD,meta}}(\Delta T)=\frac{1}{T_b}\int_{0}^{T_b/2}2k\Delta TA_{pre}e^{\frac{t}{\tau_{reg}}}dt\) </p></center>
+                        <center><p> \(\overline{V_{PD,meta}}(\Delta T)\approx 2k\Delta TA_{pre}\frac{\tau_{reg}}{T_b}e^{\frac{T_b}{2\tau_{reg}}}\propto \Delta T\) </p></center>
+                        <p>我們得到一個結論:  \(\overline{V_{PD,meta}}(\Delta T)\propto \Delta T\) 。</p>
+                        <p>當 \(\Delta T\) 逐漸變大的時候，Fig. 2 (c) 的最終值會變大，並且當最終值等於 \(V_F\) 的
+                            時候，Fig. 2 (c) 將轉變成 Fig. 2 (b)，此刻為 PD Curve 不再線性的位置，我們
+                            定義為 \(\Delta T_{lin}\) :</p>
+                        <center><p> \(2k\Delta T_{lin}A_{pre}e^{\frac{T_b}{2\tau_{reg}}}=V_F\) </p></center>
+                        <center><p> \(\Delta T_{lin}=\frac{V_F}{2k\Delta T_{lin}A_{pre}e^{\frac{T_b}{2\tau_{reg}}}}\) </p></center>
+                        <p> \(\overline{V_{PD,meta}}(\Delta T)\) 飽和的時刻為 Fig. 2 (b) 轉變為 Fig. 2 (a) 的時刻，我們定義為
+                             \(\Delta T_{sat}\) :</p>
+                        <center><p> \(\Delta T_{sat}=\frac{V_F}{2kA_{pre}}\)</p></center>
+                        <p>綜合上述分析，我們可以繪製出 Fig. 3。</p>
+                        <a href="#!"><img class="img-fluid" src="../assets/img/Serdes/PD_Curve_20241024.png" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 3. Typical Bang-Bang Characteristic</span>
+                        <p></p>
+                        
+                        <h2>Jitter 對 PD 的線性化</h2>
+                        <p>輸入訊號 \(D_{in}\) 和震盪器輸出 \(CK\) 上的 Jitter 也會使得 PD Curver 變得平緩。</p>
+                        <a href="#!"><img class="img-fluid" src="../assets/img/Serdes/PD_Curve_Jitter_20241024.png" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 4. Smoothing of PD Characteristic due to Jitter</span>
+                        <p>Fig. 4 (a) 中表示，有一訊號 \(D_{in}\) 在 \(CK\) Sampling 結束前的 \(\Delta T\) 時刻就到來
+                            了，在理想情況下，PD 應該正確取得 \(D_{in}\) 的資料，但由於 \(CK\) 上搭載
+                            著 Normal Distribution Jitter 的關係，PD 有一定的機率 (灰色區間) 判斷到錯誤
+                            的 \(D_{in}\)。</p>
+                        <p>我們假設 Jitter 的 Probability Density Function (PDF) 為 \(p(x)\) 且左右對稱，
+                            則可以計算平均的 PD 輸出與 Phase Error \(\Delta T\) 的關係 \(\overline{V_{PD}}(\Delta T)\) :</p>
+                        <center><p> \( \overline{V_{PD}}(\Delta T)=-V_0\int_{+\Delta T}^{+\infty}p(x)dx+V_0\int_{-\infty}^{+\Delta T}p(x)dx \) </p></center>
+                        <p>假設 Jitter 的 PDF 呈現 Gaussian Disstribution，標準差為 \(\sigma\)，則如 Fig. 4 (b) 中所表示，此 BBPD 的線性區間為 :</p>
+                        <center><p> \(|\Delta T|<2\sigma\) </p></center>
+
+                        <h2>Metastibility 和 Jitter 共同對 PD 的線性化</h2>
+                        <a href="#!"><img class="img-fluid" src="../assets/img/Serdes/PD_Curve_Total_20241024.png" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 4. Total Characteristic</span>
+                        <p>我們考慮 Phase Error 為 \(\Delta T_1\) 時，PD 的輸出為 \(\overline{V_{tot}}(\Delta T_1)\)。</p>
+                        <center><p> \(\overline{V_{tot}}(\Delta T_1)=\int_{-\infty}^{+\infty}\overline{V_{meta}}(\Delta T_1+x)p(x)dx\) </p></center>
+                        <p>若 Jitter 的 PDF 為左右對稱，即 \(p(x)=p(-x)\)，則 \(\overline{V_{tot}}(\Delta T_1)\) 可化簡為 :</p>
+                        <center><p> \(\overline{V_{tot}}(\Delta T_1)=\int_{-\infty}^{+\infty}\overline{V_{meta}}(\Delta T_1-u)p(u)du\) </p></center>
+                        <p> \(\overline{V_{tot}}(\Delta T)\) 即為 \(\overline{V_{meta}}(\Delta T)\) 和 \(p(x)\) 的 convolution。</p>
+                        <center><p> \(\overline{V_{tot}}(\Delta T)=\overline{V_{meta}}(\Delta T)*p(x)\)</p></center>
+                        <p>這使得 PD Curve 的線性區間從遠本的 \(\Delta T_{lin}\) 被額外拓展了 \(2\sigma\)。</p>
+                        <p>
+                            References:
+                            <a href="https://ieeexplore.ieee.org/document/1327756">Analysis and Modeling of Bang-Bang Clock and Data Recovery Circuits, JSSC, 2004</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.instagram.com/hung_ju_0.0/" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://www.facebook.com/leo2012621" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/Ju-Lee-Analog" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; Analog Integrated Circuit - Ju Lee's Blog 2024</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
