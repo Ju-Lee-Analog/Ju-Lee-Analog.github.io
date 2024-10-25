@@ -109,8 +109,9 @@
                         <center><p> \(G_{JT}(\omega_\phi)=\pi\sqrt{1+\frac{K_{VCO}^2I_P^2R_P^2}{4\omega_\phi^2}}\) </p></center>
                         <p>我們定義 Jitter Tolerance 為 \(\sqrt{2}\pi\) 時的頻率為 Jitter Tolerance Bandwidth \(\omega_1\) :</p>
                         <center><p> \(\omega_1=\frac{K_{VCO}I_PR_P}{2}\) </p></center>
-                        <p>此處有兩點值得注意 :</p>
+                        <p>此處有三點值得注意 :</p>
                         <p><li>Jitter Tolerance 和 BBPD 的 Metastability 與 Random Jitter 無關</li></p>
+                        <p><li>Jitter Tolerance 隨著 \(\omega_\phi\) 變大，呈現 -20dB/dec 遞減</li></p>
                         <p><li>當 \(\omega_\phi\) 逐漸變大時，\(G_{JT}(\omega_\phi)\) 會趨近於 \(\pi\)，也就是半個 UI，意即 BBCDR 完全失去作用，Phase Error \(\Delta \phi (t)\) 直接等於輸入 Jitter \(\phi_{in}(t)\)</li></p>
                         
                         <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Jitter_Tolerance_2nd_order_20241025.png" alt="..." /></a></center>
@@ -129,7 +130,7 @@
                         <center><p> \(\Delta \phi_{max} \approx 0.61\frac{\pi^2K_{VCO}I_P}{4C_P\omega_\phi^2}+0.8\frac{\sqrt{16C_P^2\omega_\phi^4\phi_{in, p}^2-\pi^4K_{VCO}^2I_P^2}}{4C_P\omega_\phi^2}\) </p></center>
                         <p>我們再次定義 \(\Delta \phi_{max}\) 為 \(\pi\)，我們可以計算此時的 \(\phi_{in, p}\) 即為 \(\omega_\phi\) 頻率下的 Jitter Tolerance \(G_{JT}(\omega_\phi)\) :</p>
                         <center><p> \(G_{JT}(\omega_\phi)=\sqrt{\frac{(\pi-0.61\frac{\pi^2K_{VCO}I_P}{4C_P\omega_\phi^2})^2}{0.64}+\frac{\pi^4K_{VCO}^2I_P^2}{16C_P^2\omega_\phi^4}}\) </p></center>
-                        <p>可以發現 \(G_{JT}(\omega_\phi)\) 為一個隨 \(\omega_\phi\) 增加呈 -40dB/dec 的函數，</p>
+                        <p>可以發現 \(G_{JT}(\omega_\phi)\) 為一個隨 \(\omega_\phi\) 增加呈 -40dB/dec 的函數。</p>
                         <p>我們若定義由一階計算出來的 Jitter Tolerance \(G_{JT}(\omega_\phi)\) 等於二階計算出來的 Jitter Tolerance \(G_{JT}(\omega_\phi)\)，則可以得到 -20dB/dec 和 -40dB/dec 的交界頻率 \(\omega_2\) :</p>
                         <center><p> \(\omega_2 \approx 0.63\frac{\pi}{R_PC_P}\)</p></center>
                         <p>根據上述分析，我們可以預期 Jitter Tolerance 曲線繪為 Fig. 6。</p>
