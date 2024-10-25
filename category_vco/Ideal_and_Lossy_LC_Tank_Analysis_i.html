@@ -56,7 +56,7 @@
                             <h2 class="subheading">Small Signal Analysis and 2nd Order Differential Equation</h2>
                             <span class="meta">
                                 Posted by
-                                <a href="../#!">Ju Lee</a>
+                                <a href="../index.html">Ju Lee</a>
                                 on October 19, 2024
                             </span>
                         </div>
@@ -71,21 +71,16 @@
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <a href="#!"><img class="img-fluid" src="../assets/img/VCO/Ideal_LC_Tank_20241019.png" alt="..." /></a>
                         <span class="caption text-muted">Fig. 1. An Ideal LC Tank</span>
-                        <p>對一個 Ideal LC Tank 而言，假設初始狀態為電容 \(C\) 上有一跨壓 \(V_0\)，流經電感
-                            \(L\) 的電流為 0A，則我們可以寫出以下方程式:</p>
+                        <p>對一個 Ideal LC Tank 而言，假設初始狀態為電容 \(C\) 上有一跨壓 \(V_0\)，流經電感 \(L\) 的電流為 0A，則我們可以寫出以下方程式:</p>
                         <center><p>\( I_{out}=-C\frac{dV_{out}}{dt} \)</p></center>
                         <center><p>\( V_{out}=L\frac{dI_{out}}{dt} \)</p></center>
                         <center><p>\( V_{out}(0)=V_0 \)</p></center>
                         <center><p>\( I_{out}(0)=0 \)</p></center>
-                        <p>在一開始的時刻，\(L\) 會傾向讓 \(C\) 放電，電流開始增加，跨壓開始降低，此時儲
-                            存在電容上的能量逐漸轉移至電感上，其中，電容和電感的能量可表示為 :</p>
+                        <p>在一開始的時刻，\(L\) 會傾向讓 \(C\) 放電，電流開始增加，跨壓開始降低，此時儲存在電容上的能量逐漸轉移至電感上，其中，電容和電感的能量可表示為 :</p>
                         <center><p>\( E_C=\frac{1}{2}CV_{out}^2 \)</p></center>
                         <center><p>\( E_L=\frac{1}{2}LI_{out}^2 \)</p></center>
-                        <p>當 LC Tank 的跨壓降至 0V 時，所有的能量轉移至電感上，此時輸出電流達到
-                            最大值。接著電感上的電流開始對電容充電，逐漸將能量還給電容，此時電流
-                            開始下降，跨壓開始提高，如此反覆形成週期。</p>
-                        <p>當我們嘗試解此方程式時會得到一個二階微分方程式，以及兩個 Initial
-                            Condition :</p>
+                        <p>當 LC Tank 的跨壓降至 0V 時，所有的能量轉移至電感上，此時輸出電流達到最大值。接著電感上的電流開始對電容充電，逐漸將能量還給電容，此時電流開始下降，跨壓開始提高，如此反覆形成週期。</p>
+                        <p>當我們嘗試解此方程式時會得到一個二階微分方程式，以及兩個 Initial Condition :</p>
                         <center><p>\( LC\frac{dV_{out}^2}{dt}+V_{out}=0 \)</p></center>
                         <center><p>\( V_{out}(0)=V_0 \)</p></center>
                         <center><p>\( I_{out}(0)=0 \)</p></center>

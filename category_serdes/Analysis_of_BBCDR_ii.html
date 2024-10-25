@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
+        <meta name="author" content="Ju Lee" />
+        <title>Ju Lee - Analysis of Bang-Band CDR (II)</title>
+        <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../index.html">Ju Lee's Analog ICs</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../about.html">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="../category_serdes/category_serdes.html">Serdes</a></li>
+                                <li><a class="dropdown-item" href="../category_vco/category_vco.html">VCO</a></li>
+                                <li><a class="dropdown-item" href="../category_ldo/category_ldo.html">LDO</a></li>
+                                <li><a class="dropdown-item" href="../category_adc/category_adc.html">ADC</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('../assets/img/serdes.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Analysis of Bang-Bang CDR (II)</h1>
+                            <h2 class="subheading">Jitter Transfer and Jitter Tolerance</h2>
+                            <span class="meta">
+                                Posted by
+                                <a href="../index.html">Ju Lee</a>
+                                on October 25, 2024
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <h2>Jitter Transfer</h2>
+                        <p>前一篇的討論中，我們將 Bang-Bang PD 做線性化，並且定義出其線性區間 :</p>
+                        <p>
+                            <a href="Analysis_of_BBCDR_i.html">Analysis of Bang-Bang CDR (I)</a>
+                        </p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/PD_Curve_20241025.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. (a) BBCDR Model and (b) PD Curve </span>
+                        <p>觀察 Fig. 1 中的 PD 與 V/I Converter，當 Phase Error \(\Delta \phi\) 足夠小的時候，Bang-Bang PD 呈現線性操作，PD 的輸出和 \(\Delta \phi\) 成正比，此時 PD 操作在線性區間 (Linear Region)，而當 \(\Delta \phi\) 逐漸變大，超過 \(\phi_m\) 的時候，PD 將操作在非線性區間 (Nonlinear Region)。</p>
+                        <p>當輸入的 Phase \(\phi_{in}(t)\) 速度較慢或 Amplitude 較小時， \(\phi_{out}(t)\) 可以完全追上  \(\phi_{in}(t)\)，此時 \(\Delta \phi\) 很小，PD 操作在線性區間，但當 \(\phi_{in}(t)\) 速度較快，或者 Amplitude 較大的時候， \(\phi_{in}(t)\) 的瞬間變化量變大，導致 \(\phi_{out}(t)\) 跟不上 \(\phi_{in}(t)\)，此時 \(\Delta \phi\) 變大，PD 開始操作在 Nonlinear Region，此現象我們稱之為 "Slewing"。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Slewing_20241025.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 2. Transient Slewing in BBCDR </span>
+                        <p>觀察 Fig. 2，假設有一頻率為 \(\omega_\phi\) 的 Sine Jitter \(\phi_{in}(t)\)，其 Amplitude \(\phi_{in, p} \gg \phi_m\)、PD 操作在非線性區間，並且假設 \(C_P\) 極大 (一階 Loop Filter)，則可以經由幾何圖形計算 \(\phi_{out}(t)\) 的 Amplitude \(\phi_{out, p}\) :</p>
+                        <center><p> \(\phi_{out, p}=\frac{K_{VCO}I_PR_PT_\phi}{4} \) </p></center>
+                        <p>此時此 BBCDR 的 Jitter Transfer 為輸出和輸入相位 Amplitude 的比值 :</p>
+                        <center><p> \(|\frac{\phi_{out, p}}{\phi_{in, p}}|=\frac{K_{VCO}I_PR_PT_\phi}{4\phi_{in, p}}=\frac{\pi K_{VCO}I_PR_P}{2\phi_{in, p}\omega_\phi}\) </p></center>
+                        <p>可以發現當 BBPD 開始 Slewing，Jitter Transfer 隨著輸入 Sine Jitter 的頻率 \(\omega_\phi\) 的增加，呈現 -20dB/dec 遞減。</p>
+                        <p>前面我們提到，當輸入 Sine Jitter 的頻率極慢的時候，由於 \(\phi_{out}(t)\) 會追上 \(\phi_{in}(t)\)，此時的 Jitter Transfer 為 1，故我們可以推算 Jitter Transfer 的 -3dB Bandwidth  \(\omega_{-3dB}\) 為 :</p>
+                        <center><p> \(\omega_{-3dB}=\frac{\pi K_{VCO}I_PR_P}{2\phi_{in, p}}\) </p></center>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Jitter_Transfer_20241025.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 3. (a) Jitter Transfer Slewing Bandwidth and (b) Linear Bandwidth Limit</span>
+                        <p>我們預期 Jitter Transfer 的 Bode Plot 如 Fig. 3 所示，當 \(\omega_\phi\) 變大的時候，BBPD 開始 Slewing，Jitter Transfer 開始遞減，而開始 Slewing 的頻率和輸入 Sine Jitter 的 Amplitude \(\phi_{in, p}\) 有關，當 \(\phi_{in, p}\) 越小，則 \(\omega_{-3dB}\) 越高，且當 \(\phi_{in, p}\) 小於  \(\phi_m\) 時，BBPD 完全操作在 Linear Region，此時 \(\omega_{-3dB}\) 來到最高，並不再隨著 \(\phi_{in, p}\) 減小而上升。</p>
+                        <p>需特別注意，此處使用的 \(K_{VCO}\) 單位為 \((rad/s)/V\)，\(\phi\) 的單位為 \((rad)\)，\(\omega\) 的單位為 \((rad/s)\)。</p>
+                        
+                        <h2>Jitter Tolerance</h2>
+                        <p>Jitter Tolerance 的定義為在該頻率下，不會增加 Bit Error Rate (BER) 最大的輸入 Jitter Amplitude \(\phi_{in, p}\)，也就是 Phase Error \(\Delta \phi\) 小於半個 Unit Interval (UI) :</p>
+                        <center><p> \(|\phi_{in}-\phi_{out}| < \pi\)</p></center>
+                        <p>值得注意的是，當上述式子不成立時，由於 \(\Delta \phi\) 極大，此 BBPD 必定 Slewing。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Jitter_Tolerance_1st_order_20241025.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 4. 1st Order Jitter Tolerance</span>
+                        <p>如 Fig. 4，我們優先考慮一階 Loop Filter，也就是 \(C_P\) 極大的情況，假設有一輸入 Sine Jitter 使得 BBPD Slewing，且最大的 Phase Error 恰好為 \(\pi\)，此時的 \(\phi_{in}(t)\) 為 :</p>
+                        <center><p> \(\phi_{in}(t)=\phi_{in, p}cos(\omega_\phi t+\delta)\)</p></center>
+                        <p>由幾何圖形可以觀察出 :</p>
+                        <center><p> \(\phi_{out, p} = \frac{K_{VCO}I_PR_PT_\phi}{4} = \phi_{in}(0) = \phi_{in, p}cos\delta\) </p></center>
+                        <center><p> \(\delta=tan^{-1}\frac{\sqrt{4\omega_\phi^2\phi_{in, p}^2-\pi^2K_{VCO}^2I_P^2R_P^2}}{\pi K_{VCO}I_PR_P}\) </p></center>
+                        <p>假設 : 最大的 Phase Error \(\Delta \phi_{max}\) 和 \(t_0\) 時刻的 \(\Delta \phi\) 相差無幾，則可以計算\(\Delta \phi_{max}\) :</p>
+                        <center><p> \(\Delta \phi_{max}\approx\Delta \phi(t_0)=|\phi_{in, p}cos(\frac{\pi}{2}+\delta)|=\frac{\sqrt{4\omega_\phi^2\phi_{in, p}^2-\pi^2K_{VCO}^2I_P^2R_P^2}}{2\omega_\phi}\)  </p></center>
+                        <p>由於 \(\Delta \phi_{max}\) 就是最大的可容忍誤差，即為半個 UI，即為 \(\pi\)，我們可以計算此時的 \(\phi_{in, p}\) 即為 \(\omega_\phi\) 頻率下的 Jitter Tolerance \(G_{JT}(\omega_\phi)\) :</p>
+                        <center><p> \(G_{JT}(\omega_\phi)=\pi\sqrt{1+\frac{K_{VCO}^2I_P^2R_P^2}{4\omega_\phi^2}}\) </p></center>
+                        <p>我們定義 Jitter Tolerance 為 \(\sqrt{2}\pi\) 時的頻率為 Jitter Tolerance Bandwidth \(\omega_1\) :</p>
+                        <center><p> \(\omega_1=\frac{K_{VCO}I_PR_P}{2}\) </p></center>
+                        <p>此處有兩點值得注意 :</p>
+                        <p><li>Jitter Tolerance 和 BBPD 的 Metastability 與 Random Jitter 無關</li></p>
+                        <p><li>當 \(\omega_\phi\) 逐漸變大時，\(G_{JT}(\omega_\phi)\) 會趨近於 \(\pi\)，也就是半個 UI，意即 BBCDR 完全失去作用，Phase Error \(\Delta \phi (t)\) 直接等於輸入 Jitter \(\phi_{in}(t)\)</li></p>
+                        
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Jitter_Tolerance_2nd_order_20241025.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 4. 1st Order Jitter Tolerance</span>
+                        <p>如 Fig. 5，我們接著考慮二階 Loop Filter，也就是 \(C_P\) 相對 \(\omega_\phi\) 不可忽略的情況，此時的 \(\phi_{out}(t)\) 並非以一次線性的方式追鎖 \(\phi_{in}\)，而是以二次拋物線的方式追鎖，我們考慮在 \(0<\) \(t<\frac{T_\phi}{2}\) 的區間 :</p>
+                        <center><p> \(\phi_{out}(t)=\phi_{out, p}-\int K_{VCO}\frac{I_P}{C_P}tdt = \phi_{out, p}-\frac{K_{VCO}I_P}{2C_P}t^2\) </p></center>
+                        <p>由幾何圖形可以觀察出 :</p>
+                        <center><p> \(\phi_{out}(\frac{T_\phi}{2}) = -\phi_{out, p} = \phi_{out_p}-\frac{K_{VCO}I_PT_\phi^2}{8C_P}\) </p></center>
+                        <center><p> \(\phi_{out, p} = \frac{\pi^2K_{VCO}I_P}{4C_P\omega_\phi^2}=\phi_{in}(0)=\phi_{in, p}cos\delta\) </p></center>
+                        <p>由此可計算出 \(sin\delta\) 以及 \(cos\delta\) :</p>
+                        <center><p> \(cos\delta=\frac{\pi^2K_{VCO}I_P}{4C_P\omega_\phi^2\phi_{in, p}}\) </p></center>
+                        <center><p> \(sin\delta=\frac{\sqrt{(4C_P\omega_\phi^2\phi_{in, p})^2-(\pi^2K_{VCO}I_P)^2}}{4C_P\omega_\phi^2\phi_{in, p}}\) </p></center>
+                        <p>接著我們再次假設 : 最大的 Phase Error \(\Delta \phi_{max}\) 和 \(\frac{T_\phi}{2\sqrt{2}}\) 時刻的 \(\Delta \phi\) 相差無幾，則可以計算 \(\Delta \phi_{max}\) :</p>
+                        <center><p> \(\Delta \phi_{max} \approx |\phi_{in, p}cos(\omega_\phi \frac{T_\phi}{2\sqrt{2}}+\delta)| \) </p></center>
+                        <p>使用複角公式展開，並代入 \(sin\delta\) 以及 \(cos\delta\) 後可以得到 :</p>
+                        <center><p> \(\Delta \phi_{max} \approx 0.61\frac{\pi^2K_{VCO}I_P}{4C_P\omega_\phi^2}+0.8\frac{\sqrt{16C_P^2\omega_\phi^4\phi_{in, p}^2-\pi^4K_{VCO}^2I_P^2}}{4C_P\omega_\phi^2}\) </p></center>
+                        <p>我們再次定義 \(\Delta \phi_{max}\) 為 \(\pi\)，我們可以計算此時的 \(\phi_{in, p}\) 即為 \(\omega_\phi\) 頻率下的 Jitter Tolerance \(G_{JT}(\omega_\phi)\) :</p>
+                        <center><p> \(G_{JT}(\omega_\phi)=\sqrt{\frac{(\pi-0.61\frac{\pi^2K_{VCO}I_P}{4C_P\omega_\phi^2})^2}{0.64}+\frac{\pi^4K_{VCO}^2I_P^2}{16C_P^2\omega_\phi^4}}\) </p></center>
+                        <p>可以發現 \(G_{JT}(\omega_\phi)\) 為一個隨 \(\omega_\phi\) 增加呈 -40dB/dec 的函數，</p>
+                        <p>我們若定義由一階計算出來的 Jitter Tolerance \(G_{JT}(\omega_\phi)\) 等於二階計算出來的 Jitter Tolerance \(G_{JT}(\omega_\phi)\)，則可以得到 -20dB/dec 和 -40dB/dec 的交界頻率 \(\omega_2\) :</p>
+                        <center><p> \(\omega_2 \approx 0.63\frac{\pi}{R_PC_P}\)</p></center>
+                        <p>根據上述分析，我們可以預期 Jitter Tolerance 曲線繪為 Fig. 6。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Jitter_Tolerance_20241025.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 6. 2nd Order Jitter Tolerance</span>
+                                                <p>
+                            References:
+                            <a href="https://ieeexplore.ieee.org/document/1327756">Analysis and Modeling of Bang-Bang Clock and Data Recovery Circuits, JSSC, 2004</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.instagram.com/hung_ju_0.0/" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://www.facebook.com/leo2012621" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/Ju-Lee-Analog" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; Analog Integrated Circuit - Ju Lee's Blog 2024</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

@@ -56,7 +56,7 @@
                             <h2 class="subheading">How to extract \( Q \), \( C_{eff} \), \( L_{eff} \) and \( R_P \)</h2>
                             <span class="meta">
                                 Posted by
-                                <a href="../#!">Ju Lee</a>
+                                <a href="../index.html">Ju Lee</a>
                                 on October 18, 2024
                             </span>
                         </div>
@@ -69,8 +69,7 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <p>為了 LC Tank 的對稱性，我們可以使用兩個大電阻分別偏壓 LC Tank 的兩端，
-                            並聯 AC 電流源後可模擬其 AC Impedance Response。</p>
+                        <p>為了 LC Tank 的對稱性，我們可以使用兩個大電阻分別偏壓 LC Tank 的兩端，並聯 AC 電流源後可模擬其 AC Impedance Response。</p>
                         <a href="#!"><img class="img-fluid" src="../assets/img/VCO/LC_Tank_Impedance_20241018.jpg" alt="..." /></a>
                         <span class="caption text-muted">Fig. 1. LC Tank Impedance AC Response Example</span>
                         <p>由 AC Response 的峰值可以萃取 LC Tank 中等效的並聯電阻</p>
@@ -80,8 +79,7 @@
                         <p>以諧振頻率為中心，往左右各衰減 3dB 可以得到頻寬 \( \omega_{bw} \)</p>
                         <p>諧振頻率 \( \omega_0 \) 除以頻寬 \( \omega_{bw} \) 可以得到 LC Tank 的 Quality Factor \( Q \)</p>
                         <center><p>\( Q=\frac{\omega_0}{\omega_{bw}} \)</p></center>
-                        <p>由於 Quality Factor Q 為並聯電阻、諧振頻率、並聯電容，三者的乘積，可以
-                            反推等效的並聯電容大小 \( C_{eff} \)</p>
+                        <p>由於 Quality Factor Q 為並聯電阻、諧振頻率、並聯電容，三者的乘積，可以反推等效的並聯電容大小 \( C_{eff} \)</p>
                         <center><p>\( C_{eff}=\frac{Q}{\omega_0 R_P} \)</p></center>
                         <p>接著可以由等效並聯電容和諧振頻率反推等效的並聯電感值 \( L_{eff} \)</p>
                         <center><p>\( L_{eff}=\frac{1}{\omega_0^2 C_{eff}} \)</p></center>
