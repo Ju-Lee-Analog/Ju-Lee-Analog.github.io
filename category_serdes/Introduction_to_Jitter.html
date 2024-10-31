@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
+        <meta name="author" content="Ju Lee" />
+        <title>Ju Lee - Analysis of Bang-Band CDR (II)</title>
+        <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../index.html">Ju Lee's Analog ICs</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../about.html">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="../category_serdes/category_serdes.html">Serdes</a></li>
+                                <li><a class="dropdown-item" href="../category_vco/category_vco.html">VCO</a></li>
+                                <li><a class="dropdown-item" href="../category_ldo/category_ldo.html">LDO</a></li>
+                                <li><a class="dropdown-item" href="../category_adc/category_adc.html">ADC</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('../assets/img/serdes.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Introduction to Jitter</h1>
+                            <h2 class="subheading">Periodic, Data-dependent, Duty-cycle and Random Jitter</h2>
+                            <span class="meta">
+                                Posted by
+                                <a href="../index.html">Ju Lee</a>
+                                on October 31, 2024
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <h2>Jitter Seperation</h2>
+                        <p>如 Fig. 1 所示，我們可以將 Total Jitter 分類為 Bounded Jitter 以及 Unbounded Jitter，其中 Bounded Jitter 為有範圍的 Jitter，並且不會隨著量測時間拉長而變大。Unbounded Jitter 則為一個無界的 Jitter，可以理解為只要量測時間夠長，傳送的資料量夠多，儘管機率微乎其微，仍然有可能出現一個極大的 Jitter，因此當我們量測 Peak to Peak Jitter 的時候，Unbounded Jitter 會隨著量測時間逐漸變大，最終將 Eye Diagram 合上。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Jitter_Seperation_20241031.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. Jitter Seperation </span>
+                        
+                        <h2>Periodic Jitter (PJ)</h2>
+                        <p>顧名思義，Periodic Jitter 是一個周期性的 Jitter，通常由外部 Noise Source Couple 進系統中，比如: Power Supply Noise、周邊其他的 Clock Source 等等。舉例來說，如 Fig. 2 所示，若含 Jitter 的 Clock 被表示為 \(CK_{jittered}(t)\) :</p>
+                        <center><p>\(CK_{jittered}(t)=sin(2\pi f_c t+0.5\pi sin(2\pi f_{sj}t))\)</p></center>
+                        <p>此例子中，Clock 的主頻率為 \(f_c\)，並且在相位上被搭載了 Peak to Peak 為 \(0.5/f_c\) 秒的 Sinusodial Jitter (SJ)，在 A 時刻 Phase Error 為 0，在 B、C 時刻 Phase 為 Leading，在 D、E 時刻 Phase 則為 Lagging，在 F 時刻則又回到 Phase Error 為 0。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/SJ_20241031.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 2. Sinusodial Jitter Example </span>
+                        
+                        <p>由於 Sinusodial 波型在波峰和波谷停留的時間最長，在中間值時，波的振幅變化速度最快，我們可以預期 SJ 的 PDF 是一個極值機率較高，中間值機率較低的函數，若我們將此被搭載 SJ 的 Clock 以 \(1/f_c\) 的週期繪製 Eye Diagram，則會得到類似於 Fig. 3 的眼圖。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/PJ_Eye_20241031.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 3. Periodic Jitter Eye Diagram Example </span>
+
+                        <h2>Data-dependent Jitter (DDJ)</h2>
+                        <p>Data-dependent Jitter 由不同的 Bit Sequence 組合所產生，也被稱為 Inter-symbol Interference (ISI)，如 Fig. 4 所示，當 Impulse Response 有 pre-cursor 和 post-cursor 時，1110 的輸出會相較於 1010 的輸出，在 10 的 Edge Lagging。</p>
+                        
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/ISI_20241031.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 4. ISI Example </span>
+
+                        <p>根據 Fig. 4，我們可以預期若 Impulse Response 是固定的，則此 Jitter 的大小幾乎也是固定的，因此 DDJ 的 PDF 是在兩個特定 Amplitude 有機率的函數，如 Fig. 5 所示。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/DDJ_Eye_20241031.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 5. Data-dependent Jitter Eye Diagram Example </span>
+
+                        <h2>Duty-cycle Distortion (DCD)</h2>
+                        <p>造成 Duty-cycle Distortion 的原因有二 :</p>
+                        <p><li>Rising 和 Falling 的 Slew Rate 不同，導致 Rising 和 Falling 的交錯點並不在預期的 \(V_{CM}\) 上</li></p>
+                        <p><li>決策的 Threshold Voltage 不在理想 \(V_{CM}\) 的位置</li></p>
+                        <p>如 Fig. 6 所示，DCD 的 PDF 是在兩個特定 Amplitude 有機率的函數。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/DCD_Eye_20241031.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 5. Duty-cycle Distortion Eye Diagram Example </span>
+
+                        <h2>Random Jitter (RJ)</h2>
+                        <p>由於 Random Jitter 為 Unbounded Jitter，只要量測時間夠長 (或資料夠多)，Peak to Peak Jitter 為無窮大，因此定義 RJ 的時候，都需要設下一個條件 : Bit Error Rate (BER)。</p>
+                        <p>假設 RJ 呈現高斯分布，並有標準差 \(Jitter_{rms}\)，則要達到不同 BER，對應的 Peak to Peak RJ 如 Tab. 1 所示，\(DTD\) 為 Data Transition Density。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/RJ_rms_table.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Tab. 1. BER with its RMS Multiplier </span>
+                        
+                        <p>舉例來說，若我們想要 BER 為 \(10^{-12}\)，則 Peak to Peak RJ \(Jitter_{p2p}\) 為 :</p>
+                        <center><p>\(Jitter_{p2p}=14.069 \times Jitter_{rms}\)</p></center>
+
+                        <h2>Bathtub Curve</h2>
+                        <p>Bathtub Curve 描述 BER 和 Eye Opening 的關係，隨著資料越多，\(Jitter_{p2p}\) 會越大，導致眼寬 (Eye Width) 越小，舉例如 Fig. 6 所示，在 BER 為 \(10^{-3}\) 時，眼寬還有 \(0.5UI\)，而當 BER 為 \(10^-5\) 時，眼寬只剩下 \(0.25UI\)。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Bathtub_20241031.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 5. Bathtub Curve Example </span>
+
+                        <p>
+                            References:
+                            <a href="https://ocw.snu.ac.kr/sites/default/files/NOTE/Lec%201%20-%20Jitter%20and%20Phase%20Noise.pdf">Topics in IC Design, 1. 1 Introduction to Jitter, Deog-Kyoon Jeong, Seoul National University, 2020, Fall</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.instagram.com/hung_ju_0.0/" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://www.facebook.com/leo2012621" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/Ju-Lee-Analog" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; Analog Integrated Circuit - Ju Lee's Blog 2024</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
