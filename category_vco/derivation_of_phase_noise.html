@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
+        <meta name="author" content="Ju Lee" />
+        <title>Ju Lee - Derivation of Phase Noise</title>
+        <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../index.html">Ju Lee's Analog ICs</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../about.html">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="../category_serdes/category_serdes.html">Serdes</a></li>
+                                <li><a class="dropdown-item" href="../category_vco/category_vco.html">VCO</a></li>
+                                <li><a class="dropdown-item" href="../category_ldo/category_ldo.html">LDO</a></li>
+                                <li><a class="dropdown-item" href="../category_adc/category_adc.html">ADC</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('../assets/img/vco.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Derivation of Phase Noise</h1>
+                            <h2 class="subheading">Fourier Transform of Phase Noise</h2>
+                            <span class="meta">
+                                Posted by
+                                <a href="../index.html">Ju Lee</a>
+                                on November 2, 2024
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <p>當我們提到 Noise，舉例來說，有一個理想電阻 \(R\)，其 Thermal Noise 在頻譜上的分布為 White Noise，其大小為 \(4KTR\)，單位為 \(V^2/Hz\)，意即每單位赫茲的 Noise Power，因此 \(4KTR\) 又被稱為功率頻譜密度 (Power Spectrum Density, PSD)。</p>                         
+                        <p>由於電壓的 Noise 可以輕易的在示波器上觀察的到，因此使用 Power 的方式來量化非常的直覺，但 Phase Noise 卻不是如此。Phase 的單位為 \(rad\)，而 \(rad\) 必須對應到某一個特定頻率才會有其意義，因此我們在觀察 Phase Noise 的時候，也不會使用 \((rad)^2/Hz\) 為單位。</p>
+                        
+                        <h2>Fourier Transform</h2>
+                        <p>在進入主題之前，我們先簡單複習 Fourier Transform，一個 Sinusodial Wave \(y(t)=A_0sin(2\pi f_0t)\) 的 Fourier Transform \(Y(f)\) 為 :</p>
+                        <center><p>\( Y(f)=\int^\infty_{-\infty}A_0sin(2\pi f_0t)e^{-j2\pi ft}dt \)</p></center>
+                        <center><p>\( = A_0 \int^\infty_{-\infty} \frac{e^{j2\pi f_0t}-e^{-2\pi f_0t}}{2j}e^{-j2\pi ft}dt \)</p></center>
+                        <center><p>\( = \frac{A_0}{2j} \int^\infty_{-\infty} e^{j2\pi (f_0-f)t}-e^{-2\pi (f_0+f)t} dt \)</p></center>
+                        <p>由於 \(\int^\infty_{-\infty}e^{j\alpha x}dx=2\pi \delta (\alpha)\)，可以得到 :</p>
+                        <center><p>\( Y(f) = \frac{A_0}{2j} (2\pi \delta (2\pi (f_0-f))-2\pi \delta (-2\pi (f_0+f))) \)</p></center>
+                        <p>由於 \(\delta(2\pi x)\) 是 \(\delta(x)\) 沿著 \(x\) 座標縮小 \(2\pi\) 倍，故其面積縮小為 \(1/2\pi\)，因此得到 :</p>
+                        <center><p> \(\delta(2\pi x) = \frac{1}{2\pi}\delta(x)\) </p></center>
+                        <p>又 \(\delta(x)\) 為一偶函數，即對 \(y\) 軸左右對稱，可以化簡 \(Y(x)\) :</p>
+                        <center><p>\( Y(f) = \frac{A_0}{2j} (\delta (f-f_0))- \delta ((f+f_0)) \)</p></center>
+                        <p>我們觀察到 \(Y(f)\) 是一個在 \(\pm f_0\) 處有數值為 \(A_0/2j\) 的函數，進一步分析 \(A_0/2j\) 可以化簡為 :</p>
+                        <center><p>\( \frac{A_0}{2j}=\frac{A_0}{2}(cos\frac{3\pi}{2}+jsin\frac{3\pi}{2}) \)</p></center>
+                        <p>也就是說 \(y(t)\) 是由兩個振幅為 \(A_0/2\)，相位為 \(270^\circ\)，頻率各自為 \(f_0\) 和 \(-f_0\) 的訊號組成，若讀者用同樣的步驟對 \(cos\) 函數做 Fourier Transform，可以觀察到其結果為 :</p>
+                        <center><p>\( F\{A_0cos(2\pi f_0 t)\} = \frac{A_0}{2} (\delta (f-f_0))+ \delta ((f+f_0)) \)</p></center>
+                        <p>其振幅和頻率與 \(y(t)\) 皆相同，而相位為 \(0^\circ\)，較 \(y(t)\) 領先了 \(90^\circ\)，符合預期。</p>
+
+                        <p>何為負頻率，我們觀察複指數函數 \(e^{\omega t}\)，當 \(\omega\) 為正時，訊號為逆時針旋轉，當 \(\omega\) 為負時，訊號為順時針旋轉，只要 \(|\omega|\) 相同，他們可以表示相同振福、相同頻率，只是相位變化為相反方向的函數，而 \(y(t)\) 正是由這兩個訊號成分所組成。</p>
+                        <p>若我們將 \(Y(f)\) 做 Inverse Fourier Transform，則會得到原本的 \(y(t)\)，證明如下 :</p>
+                        <center><p>\(y(t)=\int^\infty_{-\infty} (\frac{A_0}{2j} (\delta (f-f_0))- \delta ((f+f_0)))e^{j2\pi ft}df \)</p></center>
+                        <center><p>\( =\frac{A_0}{2j} (\int^\infty_{-\infty} \delta (f-f_0)e^{j2\pi ft}df - \int^\infty_{-\infty} \delta (f+f_0)e^{j2\pi ft}df) \)</p></center>
+                        <center><p>\( = A_0\frac{e^{j2\pi f_0t}-e^{-j2\pi f_0t}}{2j} = A_0sin(2\pi f_0 t) \)</p></center>
+
+                        <p>如果我們不是用頻率 \(f\) 來做 Fourier Transform，而是改用角速度 \(\omega\) 會發生什麼事呢，我們一樣對 \(y(t)\) 做 Fourier Transform :</p>
+                        <center><p>\( Y(\omega)=\int^\infty_{-\infty}A_0sin(\omega_0 t)e^{-j\omega t}dt \)</p></center>
+                        <center><p>\( = A_0 \int^\infty_{-\infty} \frac{e^{j\omega_0 t}-e^{-j\omega_0 t}}{2j}e^{-j\omega t}dt \)</p></center>
+                        <center><p>\( = \frac{A_0}{2j} \int^\infty_{-\infty} e^{j(\omega_0-\omega)t}-e^{-j(\omega_0+\omega)t} dt \)</p></center>
+                        <center><p>\( = \frac{A_0}{2j}\times 2\pi (\delta (\omega-\omega_0))- \delta ((\omega+\omega_0)) \)</p></center>
+                        <p>由於 Fourier Transform 為頻譜密度，因此以角速度 \(\omega\) 為單位的頻譜密度，會較以頻率 \(f\) 為頻譜密度的結果大上 \(2\pi\) 倍。</p>
+                        
+                        <h2>Phase Noise</h2>
+                        <p>我們接著在理想 Sinusodial Wave 上加上 Phase Noise \(\phi(t)\)，並得到新的波型 \(k(t)\) :</p>
+                        <center><p>\(\phi(t)=A_1sin(2\pi f_1 t)\)</p></center>
+                        <center><p>\( k(t)=A_0sin(2\pi f_0 t+A_1 sin(2\pi f_1 t)) \)</p></center>
+                        <p>假設 \(A_1\) 非常小，使得 :</p>
+                        <center><p>\(sin\phi(t)\approx \phi(t)\)</p></center>
+                        <center><p>\(cos\phi(t)\approx 1\)</p></center>
+                        <p>同樣，我們對 \(k(t)\) 做 Fourier Transform :</p>
+                        <center><p>\(K(f)=\int^\infty_{-\infty}A_0sin(2\pi f_0 t+A_1sin2\pi f_1 t)e^{-j2\pi f t}dt\)</p></center>
+                        <center><p>\( \approx A_0 \int^\infty_{-\infty} sin(2\pi f_0 t) e^{-j2\pi ft}+A_1sin(2\pi f_1t)cos(2\pi f_0 t) e^{-j2\pi ft} dt\)</p></center>
+                        <center><p>\( = Y(f) + A_0 \int^\infty_{-\infty} A_1sin(2\pi f_1 t)cos(2\pi f_0 t) e^{-j2\pi ft} dt \)</p></center>
+                        <p>根據積化差和 \(sinAcosB=\frac{1}{2}[sin(A+B)+sin(A-B)]\) :</p>
+                        <center><p>\( K(f)=Y(f) + \frac{A_0A_1}{2} \int^\infty_{-\infty} [sin(2\pi (f_0 + f_1)t) + sin(2\pi (f_1-f_0)t)] e^{-j2\pi ft} dt  \)</p></center>
+                        <center><p>\( = Y(f) + \frac{A_0A_1}{4j} [\delta (f-f_0-f_1)+\delta (f+f_0+f_1) + \delta (f+f_0-f_1) + \delta (f-f_0+f_1)] \)</p></center>
+                        <p>意即除了原本的 \(Y(f)\) 以外，還多出了在 \(\pm f_0\) 旁邊的 \(\pm (f_0 \pm f_1)\)，大小為 \(A_0A_1/4\) 的四個頻率成分，如 Fig. 1 所示，因此當我們把一個時脈訊號拿去做 Fourier Transform，並觀察其 Power Spectrum Density，也就是其餘頻率成分與主頻率成分的差異 (\(dBc/Hz\)) 的時候，其實得到的是 :</p>
+                        <center><p>\(\frac{P_{single-side-band}}{P_{signal}}=\frac{A_0A_1/4}{A_0/2}=\frac{A_1}{2}\)</p></center>
+                        <p>也就是 Phase Noise Amplitude \(A_1\) 的一半。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/Phase_Noise_PSD_20241102.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. Phase Noise Power Spectrum Density </span>
+                        <p>
+                            References:
+                            <a href="https://ocw.snu.ac.kr/sites/default/files/NOTE/Lec%201%20-%20Jitter%20and%20Phase%20Noise.pdf">Topics in IC Design, 1. 1 Introduction to Jitter, Deog-Kyoon Jeong, Seoul National University, 2020, Fall</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.instagram.com/hung_ju_0.0/" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://www.facebook.com/leo2012621" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/Ju-Lee-Analog" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; Analog Integrated Circuit - Ju Lee's Blog 2024</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
