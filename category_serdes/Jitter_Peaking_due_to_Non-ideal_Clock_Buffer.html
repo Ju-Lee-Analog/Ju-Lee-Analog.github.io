@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="LC Tank Quality Factor, Rp, Leff, Ceff Measurement" />
+        <meta name="description" content="Jitter Peaking due to Non-ideal Clock Buffer" />
         <meta name="author" content="Ju Lee" />
-        <title>Ju Lee - Analysis of LC Tank</title>
+        <title>Ju Lee - Analysis of Bang-Band CDR (I)</title>
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -47,17 +47,17 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('../assets/img/vco.png')">
+        <header class="masthead" style="background-image: url('../assets/img/serdes.png')">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>Analysis of LC Tank</h1>
-                            <h2 class="subheading">How to extract \( Q \), \( C_{eff} \), \( L_{eff} \) and \( R_P \)</h2>
+                            <h1>Jitter Peaking due to Non-ideal Clock Buffer</h1>
+                            <h2 class="subheading">Jitter Transfer, Jitter Peaking, Limited Bandwidth</h2>
                             <span class="meta">
                                 Posted by
                                 <a href="../index.html">Ju Lee</a>
-                                on October 18, 2024
+                                on November 17, 2024
                             </span>
                         </div>
                     </div>
@@ -69,23 +69,36 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <p>為了 LC Tank 的對稱性，我們可以使用兩個大電阻分別偏壓 LC Tank 的兩端，並聯 AC 電流源後可模擬其 AC Impedance Response。</p>
-                        <a href="#!"><img class="img-fluid" src="../assets/img/VCO/LC_Tank_Impedance_20241018.jpg" alt="..." /></a>
-                        <span class="caption text-muted">Fig. 1. LC Tank Impedance AC Response Example</span>
-                        <p>由 AC Response 的峰值可以萃取 LC Tank 中等效的並聯電阻</p>
-                        <center><p>\( R_P=peak\{Impedance\} \)</p></center>
-                        <p>峰值時刻的頻率為 LC Tank 的諧振頻率</p>
-                        <center><p>\( \omega_0=\frac{1}{\sqrt{LC}} \)</p></center>
-                        <p>以諧振頻率為中心，往左右各衰減 3dB 可以得到頻寬 \( \omega_{bw} \)</p>
-                        <p>諧振頻率 \( \omega_0 \) 除以頻寬 \( \omega_{bw} \) 可以得到 LC Tank 的 Quality Factor \( Q \)</p>
-                        <center><p>\( Q=\frac{\omega_0}{\omega_{bw}} \)</p></center>
-                        <p>由於 Quality Factor Q 為並聯電阻、諧振頻率、並聯電容，三者的乘積，可以反推等效的並聯電容大小 \( C_{eff} \)</p>
-                        <center><p>\( C_{eff}=\frac{Q}{\omega_0 R_P} \)</p></center>
-                        <p>接著可以由等效並聯電容和諧振頻率反推等效的並聯電感值 \( L_{eff} \)</p>
-                        <center><p>\( L_{eff}=\frac{1}{\omega_0^2 C_{eff}} \)</p></center>
+                        <p>首先我們先定義 Jitter Transfer Function，若在一顆 Buffer 的輸入端打入定量 Jitter，並觀察此 Buffer 的輸出 Jitter，可以得到其增益為此 Buffer 的 Jitter Transfer Function (JTF)。</p>
+                        <p>若我們以一顆 Inverter 當作 Clock Buffer，則此 Buffer 的最高電壓為 Inverter 的 \(V_{DD}\)，最低電壓為 \(0V\)，若是使用 Current Mode Logic (CML) 當作 Clock Buffer，則此 Buffer 的最高電壓為 \(V_{DD}\)，最低電壓為 \(V_{DD}-I_{SS}R_L\)，其中 \(I_{SS}\) 為 Tail Current，\(R_L\) 則為負載電阻。而當此 Clock Buffer 的輸出震幅沒有頂到其最高電壓與最低電壓時，則此電路的 JTF 在高頻將會產生 Peaking Gain。</p>
+                        <p>舉實例來說，有一個 \(14GHz\)、震幅為 \(1V\) 的方波 Clock 經過一個 Low Pass Corner 為 \(3GHz\) 的一階 Low Pass Filter，使得其輸出無法頂到原本該有的 \(\pm 1V\)。當我們在第 3 個週期的 rising edge 注入大小為 0.1 週期的 Jitter，則其輸入與輸出波型會如 Fig. 1 和 Fig. 2 所示。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Square_CK_Input_20241117.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. Ideal Square Wave Input and Jittered Square Wave Input</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Square_CK_Output_20241117.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 2. 14GHz Clocks after 3GHz Low Pass Filter</span>
+                        <p>我們觀察 Fig. 2，若我們以電壓為 \(0V\) 處作為 Clock Edge，則會看到雖然我們只有在 Fig. 1 第 3 個週期的 rising edge 注入一個 Lagging 的 Jitter，但卻在輸出產生依序為 Lagging、Leading、Lagging...的 Phase Error，此 Phase Error 如 Fig. 3 所示。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Phase_Error_20241117.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 3. Phase Error</span>
+                        <p>一個二階系統的 Impulse Response \(y(t)\) 可表示為 :</p>
+                        <center><p>\(\delta = ln(\frac{Peak_1}{Peak_2})\)</p></center>
+                        <center><p>\(\zeta = \frac{\delta}{\sqrt{4 \pi^2 + \delta^2}}\)</p></center>
+                        <center><p>\(\omega_n = \frac{2 \pi}{t_{Peak_1}-t_{Peak_2}}\)</p></center>
+                        <center><p>\(y(t)=\frac{\omega_n}{\sqrt{1-\zeta^2}}e^{-\zeta \omega_n t}sin(\omega_n \sqrt{1-\zeta^2} t)\)</p></center>
+                        <p>為了擬合此 Transfer Function，我們假設此 Phase Error 為一個二階系統 Impulse Response 乘以特定比例後的取樣，並以此將 Fig. 3 中的 Discrete Time Phase Error 擬合成 Continuous Time Phase Error，如 Fig. 4 所示。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Phase_Error_Fit_20241117.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 4. Jitter Injection, DT Phase Error and CT Phase Error (2nd-order system fitting)</span>
+                        <p>接著將以 Jitter Injection 以及此 CT Phase Error 作為一二階系統的輸入與輸出，擬合出 Transfer Function，即為 JTF，擬合結果如 Fig. 5 所示。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/JTF_Fitting_20241117.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 5. Jitter Transfer Function Fitting (1 zero, 2 poles system), 94.82%</span>
+                        <p>如 Fig. 6 所示，我們繪出此 Transfer Function 的 Bode Plot，可以發現其在 \(13.4GHz\) 處有 Peaking Gain，這意味著若我們使用類似 Delay Lock Loop (DLL) 的電路架構時，若有 Buffer 的輸出沒有頂到最高與最低電壓，則 Clock 經過此 DLL 後，Phase Noise 會在高頻處被放大。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/JTF_Bode_20241117.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 6. Jitter Transfer Function Bode Plot</span>
+                        <p>而當 Buffer 的 Bandwidth 逐漸提高時，Peaking Frequency 會往低頻移動，且 Peaking Gain 也會逐漸減小，如 Fig. 7 所示。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/JTF_Bode_Sweep_20241117.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 7. Jitter Transfer Function, Sweep Low Pass Filter Corner Frequency</span>
                         <p>
-                            References:
-                            <a href="https://www.rfinsights.com/insights/design/concepts/quality-factor-and-bandwidth/">A Journey from Resonance to Impedance Matching</a>
+                            Open Sources:
+                            <a href="Matlab/Jitter_Peaking_due_to_Non-ideal_Clock_Buffer/Jitter_Peaking.m">Matlab Code</a>
                         </p>
                     </div>
                 </div>
