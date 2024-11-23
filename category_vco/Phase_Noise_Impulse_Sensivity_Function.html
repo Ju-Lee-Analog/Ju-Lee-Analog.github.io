@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Phase Noise Impulse Sensivity Function (ISF)" />
+        <meta name="author" content="Ju Lee" />
+        <title>Ju Lee - Phase Noise Impulse Sensivity Function (ISF)</title>
+        <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../index.html">Ju Lee's Analog ICs</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../about.html">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="../category_serdes/category_serdes.html">Serdes</a></li>
+                                <li><a class="dropdown-item" href="../category_vco/category_vco.html">VCO</a></li>
+                                <li><a class="dropdown-item" href="../category_ldo/category_ldo.html">LDO</a></li>
+                                <li><a class="dropdown-item" href="../category_adc/category_adc.html">ADC</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('../assets/img/vco.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Phase Noise Impulse Sensivity Function (ISF)</h1>
+                            <h2 class="subheading">ISF, Time Variant, Fourier Series</h2>
+                            <span class="meta">
+                                Posted by
+                                <a href="../index.html">Ju Lee</a>
+                                on November 23, 2024
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+
+                        <h2>Time Invariant Phase Noise Model</h2>
+                        <p>對一個震盪器輸出電壓 \(V_{out}(t)\) :</p>
+                        <center><p>\(V_{out}(t)=A(t)f(\omega_0 t+\phi (t))\)</p></center>
+                        <p>其中，\(A(t)\) 是震幅擾動，\(f(\theta)\) 是一個周期為 \(2\pi\) 的週期性函數 (如: \(sin\theta\) )， \(\omega_0\) 是角速度，\(\phi (t)\) 是相位擾動。</p>
+                        <p>計算一個 \(RLC\) 並聯的阻抗，我們可以很輕易地得到 :</p>
+
+                        <center><p>\(Z_{LC}(s)=\frac{sL}{1+s^2LC}\)</p></center>
+                        <center><p>\(Z_{LC}(\omega_0+\Delta\omega)=\frac{j(\omega_0+\Delta\omega)L}{1-(\omega_0^2+2\omega_0\Delta\omega+\Delta\omega^2)LC}\approx \frac{j\omega_0L}{-2\omega_0\Delta\omega LC}\)</p></center>
+                        <center><p>\(Z_{RLC}(\omega_0+\Delta\omega)\approx -j\frac{R}{2Q}\frac{\omega_0}{\Delta\omega}\)</p></center>
+
+                        <p>若來自電阻的 Thermal Noise 為 \(4KT/R\) \((A^2/Hz)\)，則產生在 LC Tank 上的 Noise Voltage 為 :</p>
+
+                        <center><p>\(\frac{\overline{v_n^2}}{\Delta f} = \frac{4KT}{R}(\frac{R}{2Q}\frac{\omega_0}{\Delta\omega})^2 = 4KTR (\frac{\omega_0}{2Q\Delta\omega})^2\) \((V^2/Hz)\)</p></center>
+
+                        <p>根據 Leeson's Model，我們大膽假設 Amplitude Noise 和 Phase Noise 是相同的，而 Amplitude Noise 可以輕易的被 Voltage Limiter 所消除，因此最終的 Phase Noise Voltage 即為 :</p>
+
+                        <center><p>\(2KTR(\frac{\omega_0}{2Q\Delta\omega})^2\) \((V^2/Hz)\)</p></center>
+
+                        <p>此處的 \(2KTR(\frac{\omega_0}{2Q\Delta\omega})^2\) 亦為單位赫茲下 Phase Noise \(rms\) 值的平方。</p>
+                        <p>我們定義 Phase Noise 為 :</p>
+
+                        <center><p>\(\mathscr{L}(\Delta\omega)=10log(\frac{P_{Noise}}{P_{Signal}})=10log(\frac{2KTR}{V_{sig, rms}^2}(\frac{\omega_0}{2Q\Delta\omega})^2)=10log(\frac{2KT}{P_{Signal}}(\frac{\omega_0}{2Q\Delta\omega})^2)\)</p></center>
+
+                        <p>我們可以發現以下幾點 :</p>
+                        <p><li> Thermal Noise 被乘以 \((\frac{\omega_0}{\Delta\omega})^2\)，隨著 \(\Delta\omega\) 呈 \(-20dB/dec\) 遞減</li></p>
+                        <p><li> \(Q\) 越大，\(P_{Signal}\) 越大，則 Phase Noise 越好</li></p>
+
+                        <p>如 Fig. 1 所示，Leeson's Model 將上述式子向高頻拓展至 Noise Floor，\(1/f^2\) Corner 為 \(\omega_0/2Q\)，利用 Flicker Noise Upconversion 向低頻拓展，並且預測 \(1/f^3\) corner 的位置和 Flicker Noise 的 \(1/f\) Corner 相同 :</p>
+
+                        <center><p>\(\mathscr{L}(\Delta\omega)=10log\left\{ \frac{2FKT}{P_{Signal}} [1+(\frac{\omega_0}{2Q\Delta\omega})^2](1+\frac{\Delta\omega_{1/f^3}}{|\Delta\omega|}) \right\}\)</p></center>
+                        
+                        <p>但其實，並沒有理論可以證明 \(1/f^3\) Corner 和 Flicker Noise 的 \(1/f\) Corner 相同。</p>
+
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/Leeson_Model_20241123.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. Leeson's Model - Phase Noise </span>
+
+                        <h2>Time Variant Phase Noise Model</h2>
+                        <p>我們觀察 Fig. 2，當我們在波型的峰值注入 Impulse 電流，則該訊號只會在 Amplitude 上產生反應，Phase 並不會受到影響，反之，若我們在 Zero Crossing 處注入電流，則訊號只會在 Phase 上產生反應，Amplitude 並不會受到影響。由此可知，相同的 Impulse 電流會根據注入的時間點不同，產生不同大小的 Phase Noise，這種行為我們稱之為時變系統 (Time Variant System)。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/Impulse_Injected_20241123.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 2. Impulse Current Injected at the Peak and Zero Crossing </span>
+                        
+                        <h4>Phase Shift vs \(\Delta q\) and \(q_{max}\)</h4>
+                        
+                        <p>我們舉一個三角波為例，若三角波的震幅為 \(V_{max}\)，週期為 \(T\)，振盪器的總電容量為 \(C_{tot}\)，且一個 Impulse 電流會注入 \(\Delta q\) 的電荷，則我們可以計算注入電荷 \(\Delta q\) 和 Phase Shift \(\Delta \phi\) 之間的關係為 :</p>
+                        
+                        <center><p>\(\Delta V=\frac{\Delta q}{C_{tot}}\)</p></center>
+                        <center><p>\(\Delta t=\frac{\Delta V}{dV/dt}=\frac{\Delta q}{C_{tot}}\frac{C_{tot}T}{2q_{max}}=\frac{\Delta q}{2q_{max}}T\)</p></center>
+                        <center><p>\(\Delta \phi = \frac{\Delta t}{T} = \frac{\Delta q}{2q_{max}}\propto\frac{\Delta q}{q_{max}}\)</p></center>
+
+                        <p>即 Phase Shift \(\Delta \phi\) 和注入的電荷 \(\Delta q\) 成正比，和總最大電荷量 \(q_{max}\) 成反比。</p>
+                        
+                        <h4>Impulse Sensitivity Function (ISF)</h4>
+                        
+                        <p>我們同樣觀察 Fig. 2 可以發現，Impulse 電流造成的 Phase Noise 並不會隨時間而消失，因此我們可以將 Phase Impulse Response \(h_\phi(t, \tau)\) 的行為繪製成 Fig. 3，其中 \(\omega_0\) 為振盪器的頻率，\(\Gamma(\tau)\) 為振盪器的 Impulse Sensitivity Function (ISF)，是一個週期為 \(2\pi\) 的函數，描述在 \(\tau\) 時刻注入 Impulse 電荷時所造成的 Phase Shift，在此篇中的單位為 \(rad\)。</p>
+                        <p>在 Fig. 3 中可以看到，當我們在 \(\tau_1\) 及 \(\tau_2\) 時刻注入 Impulse 電流，則會分別產生 \(\Gamma(\tau_1)\) 以及 \(\Gamma(\tau_2)\) 的 Phase Shift，並且具有累加性。</p>
+                        
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/Phase_Impuse_Response_20241123.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 3. Phase Impulse Response Model</span>
+                        
+                        <p>根據上述，我們將 Phase Impuse Response \(h_\phi(t, \tau)\) 描寫為 :</p>
+                        
+                        <center><p>\(h_\phi(t, \tau)=\frac{\Gamma(\omega_0\tau)}{q_{max}}u(t-\tau)\)</p></center>
+
+                        <p>若注入的電流為 \(i(t)\)，則可以透過 Superposition Integral 得到 Phase Shift \(\phi(t)\) :</p>
+
+                        <center><p>\(\phi(t)=\int^\infty_{-\infty}h_\phi(t, \tau)i(\tau)d\tau = \frac{1}{q_{max}}\int^t_{-\infty}\Gamma(\omega_0\tau)i(\tau)d\tau\)</p></center>
+
+                        <p>我們知道 \(\Gamma(\omega_0\tau)\) 是一個週期性函數，因此可以用 Fourier Series 展開得到 :</p>
+                        <center><p>\( \Gamma(\omega_0\tau) = \frac{c_0}{2} + \Sigma^\infty_{n=1}c_n cos(n\omega_0\tau+\theta_n) \)</p></center>
+
+                        <p>將 \(\Gamma(\omega_0\tau)\) 代回 \(\phi(t)\) 中可以得到 :</p>
+
+                        <center><p>\( \phi(t) = \frac{1}{q_{max}}[\frac{c_0}{2}\int^t_{-\infty}i(\tau)d\tau+\Sigma^\infty_{n=1}c_n\int^t_{-\infty}i(\tau)cos(n\omega_0\tau)d\tau] \)</p></center>
+
+                        <p>我們觀察頻率位於 \(m\omega_0+\Delta\omega\) 的注入電流 :</p>
+                        <center><p>\(i(t)=I_mcos((m\omega_0+\Delta\omega)t)\), \(m=0, 1, 2, ...\)</p></center>
+                        <center><p>\( \phi(t) = \frac{c_0I_m}{2q_{max}}\frac{sin((m\omega_0+\Delta\omega)t)}{(m\omega_0+\Delta\omega)t}+ \frac{\Sigma^\infty_{n=1}c_nI_m}{2q_{max}}[\frac{sin(((m+n)\omega_0+\Delta\omega)t)}{((m+n)\omega_0+\Delta\omega)t}+\frac{sin(((m-n)\omega_0+\Delta\omega )t)}{((m-n)\omega_0+\Delta\omega )t}]  \)</p></center>
+
+                        <p>註 : 此處的 \(sin(-\infty)\) 並不收斂，但可以不列入考慮，因為其僅僅代表一個未知的初始相位。</p>
+                        <p>由於 Phase Modulation，頻率為 \(f_1\) 的 Phase Fluctuation 會被頻率為 \(f_0\) 的振盪器 Upconversion 至 \(f_0\pm f_1\)</p>
+                        <p>此處可以參考先前的討論 : <a href="derivation_of_phase_noise.html">Derivation of Phase Noise</a></p>
+
+                        <p>因此 \(\phi(t)\) 的頻率成分分別會被 Upconvert 至 :</p>
+                        <p><li>\(m\omega_0+\Delta\omega \rightarrow (m+1)\omega_0+\Delta\omega\) 和 \((1-m)\omega_0-\Delta\omega\)</li></p>
+                        <p><li>\((m+n)\omega_0+\Delta\omega \rightarrow (m+n+1)\omega_0+\Delta\omega\) 和 \((1-m-n)\omega_0-\Delta\omega\)</li></p>
+                        <p><li>\((m-n)\omega_0+\Delta\omega \rightarrow (m-n+1)\omega_0+\Delta\omega\) 和 \((1-m+n)\omega_0-\Delta\omega\)</li></p>
+
+                        <p>由於 \(m > 0\) 且 \(n \ge 1\)，第一項只有在 \(m = 0\) 時會有接近 \(\omega_0\) 的頻率成分，第二項則至少位於 \(2\omega_0\) 以外，第三項則在 \(m = n\) 時會有接近 \(\omega_0\) 的頻率成分，因此，我們可以將 \(\phi(t)\) 近似成 :</p>
+
+                        <center><p>\(\phi(t)\approx \frac{I_nc_n}{2q_{max}}sin(\Delta\omega t), n = 0, 1, 2, ...\)</p></center>
+                        
+
+                        <p>如 Fig. 4 所示，若注入電流 \(i(t)\) 是一個 Wide Band 的 White Noise，則位於 \(m\omega_0\) 附近的頻率成分都會被被乘以 \(c_m\) 係數後在 \(DC\) 出現，並且經由 Phase Modulation 被 Upconvert 至 \(\omega_0\) 附近，變成與主頻率接近的 Phase Noise，並且可以表示為 :</p>
+                        <center><p>\(I_n^2 = 2\times\overline{i_n^2}/\Delta f\)</p></center>
+                        <center><p> \(\mathscr{L}(\Delta\omega) = 10log[\frac{1}{4}(\frac{\Sigma^\infty_{n=0}I_nc_n}{2q_{max}\Delta\omega})^2] = 10log(\frac{\Sigma^\infty_{n=0}I_nc_n}{4q_{max}\Delta\omega})^2 \) </p></center>
+                        <center><p> \(\mathscr{L}(\Delta\omega) = 10log(\frac{\frac{\overline{i_n^2}}{\Delta f}\Sigma^\infty_{n=0}c_n^2}{4q_{max}^2\Delta\omega^2})\) </p></center>
+                        
+
+                        <p>註 : \(\overline{i_n^2}/\Delta f\) 是在該頻率的單位赫茲下 \(rms\) 值的平方，\(I_n\) 則為 Peak Value。</p>
+                        <p>註 : \(\mathscr{L}(\Delta\omega)\) 為 Phase Fluctuation Amplitude 一半的平方。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/ISF_Fourier_Series_20241123.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 4. Conversion of Tones in the Vicinity of Integer Multiples of \(\omega_0\)</span>
+
+                        <p>根據 Parseval's Theorem，信號的 Frequency Domain Power 等於 Time Domain Power，可以得到 :</p>
+                        <center><p>\(\Sigma^\infty_{n=0}c_n^2 = \frac{2}{2\pi}\int^\pi_{-\pi}\Gamma(x)^2dx = 2\Gamma_{rms}^2\)</p></center>
+                        <center><p> \(\mathscr{L}(\Delta\omega) = 10log(\frac{\Gamma_{rms}^2}{2q_{max}^2}\frac{\overline{i_n^2}/\Delta f}{\Delta\omega^2})\) </p></center>
+
+                        <p>意味著減小 \(\Gamma_{rms}^2\) 可以優化 All Frequency 下的 Phase Noise。</p>
+
+                        <h4>\(1/f\) Corner Frequency</h4>
+                        <p>若元件的 \(1/f\) Corner 為 \(\omega_{1/f}\)，我們可以將 Flicker Noise 表示為 \(\overline{i_{n, 1/f}^2}(\omega)\) :</p>
+                        <center><p>\(\overline{i_{n, 1/f}^2} (\omega) = \overline{i_n^2}\times\frac{\omega_{1/f}}{\omega}, \omega < \omega_{1/f}\)</p></center>
+                        
+                        <center><p> \(\mathscr{L}(\Delta\omega) = 10log(\frac{\frac{\overline{i_n^2}}{\Delta f}c_0^2}{4q_{max}^2\Delta\omega^3}\omega_{1/f})\) </p></center>
+                        
+                        <p>當 Flicker Noise 造成的 Phase Noise 和 White Noise 造成的 Phase Noise 相同時，該頻率即為 Phase Noise 的 \(1/f^3\) Corner :</p>
+
+                        <center><p>\( \frac{\frac{\overline{i_n^2}}{\Delta f}c_0^2}{4q_{max}^2\omega_{1/f^3}^3}\omega_{1/f} \triangleq  \frac{\Gamma_{rms}^2}{2q_{max}^2}\frac{\overline{i_n^2}/\Delta f}{\omega_{1/f^3}^2} \)</p></center>
+                        <center><p>\( \omega_{1/f^3} = \omega_{1/f}\frac{c_0^2}{2\Gamma_{rms}^2} \)</p></center>
+                        <p>這意味著我們可以透過將 \(\Gamma\) 設計成偶函數，使得 \(c_0\) 趨近於 0，進而將 \(\omega_{1/f^3}\) 減小，比如說對一個 Ring Oscillator 而言，若其 Rising Time 和 Falling Time 有所差異，導致其波型如 Fig. 5 所示，則 ISF 不對稱，Phase Noise 較差，如 Fig. 6 所示。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/Asymmetrical_Waveform_ISF_20241123.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 5. Asymmetrical/Symmetrical Waveform and their ISFs</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/Asymmetrical_Phase_Noise_20241123.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 6. Asymmetrical/Symmetrical Phase Noise</span>
+
+                        <h4>Cyclostationary Noise Sources</h4>
+                        <p>一般來說，一個振盪器的 Noise Source 也會是和時間有關的週期性函數，舉例如 Fig. 7 所示，一個 Colpitts 振盪器的 Collector Current 與振盪器輸出電壓有關，當電流大的時候，BJT 貢獻的 Noise 大，電流小的時候則貢獻 Noise 小，這種 Noise 是一種具有暫態循環特性的週期性雜訊 (Cyclostationary Noise Source)。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/Cyclostationary_Noise_Source_20241123.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 7. Colpitts Oscillator and Cyclostationary Noise Source</span>
+
+                        <p>因此，我們使用一個 \(\alpha(\omega_0 t)\) 來對 \(i_{n0}(t)\) 做修正，得到 \(i_n(t)\) :</p>
+                        <center><p>\(i_n(t)=i_{n0}(t)\times \alpha(\omega_0 t)\)</p></center>
+                        <p><li>\(\alpha \rightarrow \) Deterministic Periodic Function </li></p>
+                        <p><li>\(i_{n0} \rightarrow \) White Stationary Process </li></p>
+                        <p><li>\(i_{n} \rightarrow \) White Cyclostationary Process </li></p>
+                        <p>幸運的是，\(\alpha(\omega_0 t)\) 可以直接和 \(\Gamma(\omega_0 t)\) 做相乘，得到 :</p>
+                        <center><p>\(\Gamma_{eff} (\omega_0 t) = \Gamma (\omega_0 t) \times \alpha(\omega_0 t)\)</p></center>
+
+                        <p>如 Fig. 8 所示，最後等效的 Impulse Sensitivity Function 為兩者的乘積。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/VCO/Effect_Gamma_20241123.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 8. \(\Gamma_{eff}\) of the Colpitts Oscillator</span>
+
+                        <p>References:</p>
+                        <p><a href="https://ieeexplore.ieee.org/document/1446612">D. B. Leeson, “A simple model of feedback oscillator noises spectrum,” Proc. IEEE, vol. 54, pp. 329–330, Feb. 1966.</a></p>
+                        <p><a href="https://ieeexplore.ieee.org/document/658619">A. Hajimiri and T. H. Lee, "A general theory of phase noise in electrical oscillators," in IEEE Journal of Solid-State Circuits, vol. 33, no. 2, pp. 179-194, Feb. 1998.</a></p>
+
+
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.instagram.com/hung_ju_0.0/" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://www.facebook.com/leo2012621" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/Ju-Lee-Analog" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; Analog Integrated Circuit - Ju Lee's Blog 2024</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
