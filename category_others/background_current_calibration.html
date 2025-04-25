@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
         <meta name="author" content="Ju Lee" />
-        <title>Ju Lee - LDO Reference Voltage for LC VCO</title>
+        <title>Ju Lee - Background Current Calibration</title>
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -48,17 +48,17 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('../assets/img/ldo.png')">
+        <header class="masthead" style="background-image: url('../assets/img/others.png')">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>LDO Reference Voltage for LC VCO</h1>
-                            <h2 class="subheading">For Process and Voltage Tracking</h2>
+                            <h1>Background Current Calibration</h1>
+                            <h2 class="subheading">Glitch Issue</h2>
                             <span class="meta">
                                 Posted by
                                 <a href="../index.html">Ju Lee</a>
-                                on October 15, 2024
+                                on April 25, 2025
                             </span>
                         </div>
                     </div>
@@ -70,12 +70,14 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <p>為了在 Process Voltage Temperature (PVT) 下達到 LC VCO 的起震條件</p>
-                        <center><p>\( g_mR_P>2 \)</p></center>
-                        <p>通常 worse corner 發生會在 SS corner，也就是 \( g_m \) 最小的情況下。</p>
-                        <p>對一個沒有 Tail Current 的 PN Pair LC VCO 來說，通常中心 bias 點位於 \( V_{DD}/2 \) 的位置，若 LDO 輸出為一個不隨 PVT 改變的定電壓，則 PN Pair 的電流由 Process 和 Temperature 決定，其中 Temperature 和 Mobility \( \mu \) 有關，Process 和 \( g_m \) 有關，在 SS corner 下，\( V_{th} \) 較大，\( V_{ov} \) 較小，\( g_m \) 較小，起震較困難。</p>
-                        <p>若 LDO 的 Reference Voltage 由絕對外灌電流 \( I_{BX} \) 和 PN Diode Connected組成，則產生的 Reference Voltage 可 PVT Tracking，PN Pair 的電流由 \( I_{BX} \) 決定，\( g_m \) 則只和 \( \mu \) 有關，不隨 Process 和 Voltage 影響，起震條件穩定。</p>
-                        <center><p>\( g_mR = \sqrt{2\mu C_{ox} \frac{W}{L}I_D}\propto\sqrt{\mu} \)</p></center>
+                        <a href="#!"><img class="img-fluid" src="../assets/img/Others/background_k_20250425.png" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 1. Classic Tail Current Calibration Structure</span>
+                        <p>如 Fig. 1. 所示，這是一個典型的 Tail Current Calibration 架構，透過將 NMOS 的 Gate 斷開並短接到地，可以將該 Tail Current 關閉，反之則可以將其打開，此架構在 Foreground Calibration 沒有太大的問題，但若使用在 Background Calibration 則會有 Glitch 產生。</p>
+                        <p>通常控制開關 S &lt N:0 &gt 與  SB &lt N:0 &gt  的訊號由數位端提供，而反向訊號則由一個 inverter 實作，不論 inverter 是將  S &lt N:0 &gt  反轉成   SB &lt N:0 &gt ，抑或是將  SB &lt N:0 &gt  反轉成  S &lt N:0 &gt ，由於 inverter 的速度不是無限快的，勢必有一個控制訊號為另一個訊號的延遲，這使得當進行 Background Calibration 的時候，若有前後跳 code 的情況發生，則會有將全體 Current Mirror Gate 端短接到地的可能，進而導致 Tail Current 有一瞬間被全部關掉。</p>
+                        <a href="#!"><img class="img-fluid" src="../assets/img/Others/background_k2_20250425.png" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 2. Background Calibration Structure</span>
+                        <p>另一種常見的做法如 Fig. 2. 所示，這種做法可以保證在切 code 的時候不會將其餘的電流源關閉，但會有 Headroom 的問題，Switch 在導通的時候需要流一個檔位大小的電流，因此通常需要夠大的 Size 以確保底下的 Tail Current 操作在 Saturation Region。</p>
+                        <p>此外，若使用二進位的檔位切換，也會有 Glitch 產生，實作上採用 Gray to Thermal Decoder，並使用 Thermometer Code 控制開關可以確保沒有 Glitch。</p>
                     </div>
                 </div>
             </div>

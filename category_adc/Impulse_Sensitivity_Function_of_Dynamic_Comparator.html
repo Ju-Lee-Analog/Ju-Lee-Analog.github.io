@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Jitter Peaking due to Non-ideal Clock Buffer" />
+        <meta name="author" content="Ju Lee" />
+        <title>Ju Lee - Impulse Sensitivity Function of Dynamic Comparator</title>
+        <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../index.html">Ju Lee's Analog ICs</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../about.html">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="../category_serdes/category_serdes.html">Serdes</a></li>
+                                <li><a class="dropdown-item" href="../category_vco/category_vco.html">VCO</a></li>
+                                <li><a class="dropdown-item" href="../category_ldo/category_ldo.html">LDO</a></li>
+                                <li><a class="dropdown-item" href="../category_adc/category_adc.html">ADC</a></li>
+                                <li><a class="dropdown-item" href="../category_others/category_others.html">Others</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('../assets/img/adc.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Impulse Sensitivity Function of Dynamic Comparator</h1>
+                            <h2 class="subheading">Sampling Aperature, LVT System, StrongArm Latch</h2>
+                            <span class="meta">
+                                Posted by
+                                <a href="../index.html">Ju Lee</a>
+                                on February 22, 2025
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/ADC/StrongArm_Latch_20250222.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. Conventional StrongArm Latch</span>
+
+                        <p>Fig. 1 是一個傳統的 StrongArm Latch，當 \(CLK\) 為 Low 時，M4 將 \(VOP\) 和 \(VON\) 拉至 \(VDD\)，當 \(CLK\) 為 High 時，M5 開始流電，\(VOP\) 和 \(VON\) 開始根據 \(VINP\) 和 \(VINN\) 的電壓不同，而有不同速度的漏電，而當 \(VOP\) 和 \(VON\) 的 Common Mode 電壓掉到 \(VDD - |V_{TH, P}|\) 的時候，M2、M3 形成 Latch，做 Positive Feedback，將 \(VOP\)、\(VON\) 更進一步拉開。</p>
+                        
+                        <h2>Sampling Phase</h2>
+                        <p>當 \(CLK\) 由 Low 變成 High 的時刻，我們定義為 \(t_{0}\)，當 \(VOP\) 和 \(VON\) 掉到 \(VDD - |V_{TH, P}|\) 的時刻，我們定義為 \(t_{1}\)，在 \(VOP\) 和 \(VON\) 開始漏電，到 M2、M3 Latch 開始作動之前的這段時間，我們將此時間稱為 Sampling Phase。</p>
+                        <p>若 M5 在 \(CLK\) 為 High 時流的電流為 \(2I_{D}\)，Latch 的單端輸出電容為 \(C_{OUT}\)，則可以得到 :</p>
+                        <center><p>\(t_1-t_0=\frac{C_{OUT}\times|V_{TH, P}|}{I_D}\)</p></center>
+
+                        <p>假設在 Sampling Phase 時，由於 M3、M4 皆為 Turn-off，故往上方看為開路，可以經由小訊號模型計算得到 :</p>
+                        <center><p>\(\frac{VO(s)}{VIN(s)}=\frac{g_{m1}g_{m2}}{sC_{OUT}C_{X}(s+\frac{g_{m2}(C_{OUT}-C_{X})}{C_{OUT}C_{X}})}\approx\frac{g_{m1}g_{m2}}{s^2C_{OUT}C_{X}}\)</p></center>
+                        <p>我們定義 :</p>
+                        <center><p>\(\tau_{s1}=\frac{C_{X}}{g_{m1}}\)</p></center>
+                        <center><p>\(\tau_{s2}=\frac{C_{OUT}}{g_{m2}}\)</p></center>
+                        <center><p>\(\frac{VO(s)}{VIN(s)}=\frac{1}{s^2\tau_{s1}\tau_{s2}}\)</p></center>
+                        <p>也就是當 Latch 在 Sampling Phase 時，其實是由兩個 Time Constant 分別為 \(\tau_{s1}\) 和 \(\tau_{s2}\) 的一階積分器串聯而成的。</p>
+                        <p>一個一階積分器的 Impulse Response 為 Step Function，而一個二階積分器的 Impulse Function 為 Ramp Function，因此我們可以簡單地將 Sampling Phase 時的 Impulse Sensitive Function \(\Gamma(t)\) 寫為 :</p>
+                        <center><p>\(\Gamma(t)\approx\frac{t_1-t}{\tau_{s1}\tau_{s2}}\times G_R\)</p></center>
+                        <p>其中 \(G_R\) 為 Regeneration Gain。越早打入的訊號，因為有越長的時間積分，因而影響輸出的權重更高，而越晚輸入的訊號則因為積分的時間較短，而對輸出的影響較小，其影響程度與輸入的時間關係為一個 Ramp Function。</p>
+
+                        <p>從 Noise 的角度來看，M1 引入的 Noise 和輸入訊號有相同的地位，因此其 Transfer Function 和前面的推導相似，僅需除以 M1 的 transconductance \(g_{m1}\) :</p>
+                        <center><p>\(\frac{VO(s)}{i_{n1}(s)}\approx\frac{g_{m2}}{s^2C_{OUT}C_{X}}\)</p></center>
+                        <p> M1 引入的 Noise 到輸出的 Transfer Function 也是一個二階積分器，故其 ISF 也是一個 Ramp Function。</p>
+                        <P>M2 引入的 Noise 則有不同，在整個 Sampling Phase 中，其皆直接灌入輸出電容 \(C_{OUT}\)，故其 Transfer Function 為 :</p>
+                        <center><p>\(\frac{VO(s)}{i_{n2}(s)}\approx\frac{1}{sC_{OUT}}\)</p></center>
+                        <p>此為一個一階的積分器，其 Impulse Response 為一個 Step Function，故其 ISF 亦為一個 Step Function，也就是其對輸出的系統為一 LTI System。</p>
+                        
+                        <h2>Regeneration Phase</h2>
+                        <p>當 Latch 開始作動後，到 Latch 的輸出被取樣的這段時間，我們稱為 Regeneration Phase，而取樣的時刻我們定義為 \(t_2\)。</p>
+                        <p>在 Regeneration Phase，\(VOP\) 和 \(VON\) 為 Exponentially 上升，其 Time Constant 為 \(\tau_R\) :</p>
+                        <center><p>\(\tau_R=\frac{C_{OUT}}{g_{m2, R}+g_{m3, R}}\)</p></center>
+                        <p>Regeneration Gain \(G_R\) 和取樣的時刻有關 :</p>
+                        <center><p>\(G_R=exp(\frac{t_2-t_1}{\tau_R})\)</p></center>
+                        <p>從 Noise 的角度來看，M2 和 M3 引入的 Noise 都會隨時間被 Exponentially Regenerated，因此其 Transfer Function 為一 Exponential 函數。越早引入的 Noise 有越長的時間做 Regeneration，而越晚引入的 Noise 則相反，因此其 ISF 和注入時間的關係為 Exponentially Decay :</p>
+                        <center><p>\(\Gamma_{n, R}(t)\approx \frac{1}{C_{OUT}}exp(\frac{t_2-t_1}{\tau_R})\)</p></center>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/ADC/Ideal_ISF_20250222.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 2. Ideal ISF of signal and noise</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/ADC/Real_ISF_20250222.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 3. Simulated ISF of signal and noise</span>
+                        <p>如果依照上述理論，輸入訊號與雜訊的 ISF 可得到 Fig. 2，但經由模擬實際得到的 ISF 則由 Fig. 3 所示，其原因在於 Sampling Phase 與 Regeneration Phase 的 \(g_m\) 並非 Constant。</p>
+                        <p>如 Fig. 4 所示，當 \(CLK\) 由 Low 轉 High 的過程中，\(g_{m1}\) 會因為 M1 的 Source 電壓下降而逐漸提高，而當 \(V_X\) 掉到 \(VDD-V_{TH, N}\) 的時候，M2 才會打開，使得 \(g_{m2}\) 逐漸提高，而當 \(V_X\) 低到比 M1 \(V_{dsat}\) 還低的時候，\(g_{m1}\) 又會再次下降。同理，Regeneration Phase 時的 \(g_{m3}\) 也是逐步提升，並非 Constant。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/ADC/Real_gm_20250222.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 4. Simulated transconductance</span>
+                        
+                        <p>
+                            References:
+                            <a href="https://ieeexplore.ieee.org/document/5175291/">Simulation and Analysis of Random Decision Errors in Clocked Comparators, TCAS-I, 2009</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.instagram.com/hung_ju_0.0/" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://www.facebook.com/leo2012621" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/Ju-Lee-Analog" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; Analog Integrated Circuit - Ju Lee's Blog 2024</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
