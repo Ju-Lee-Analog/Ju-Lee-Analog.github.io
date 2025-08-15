@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
+        <meta name="description" content="LC Tank Differential Equation Analysis" />
         <meta name="author" content="Ju Lee" />
-        <title>Ju Lee - LDO Reference Voltage for LC VCO</title>
+        <title>Ju Lee - Phase Noise Comparison</title>
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -48,17 +48,17 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('../assets/img/ldo.png')">
+        <header class="masthead" style="background-image: url('../assets/img/vco.png')">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>LDO Reference Voltage for LC VCO</h1>
-                            <h2 class="subheading">For Process and Voltage Tracking</h2>
+                            <h1>Phase Noise Comparison</h1>
+                            <h2 class="subheading">Phase Noise, Divider, PSD, Integrated Jitter</h2>
                             <span class="meta">
                                 Posted by
                                 <a href="../index.html">Ju Lee</a>
-                                on October 15, 2024
+                                on August 15, 2025
                             </span>
                         </div>
                     </div>
@@ -70,12 +70,23 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <p>為了在 Process Voltage Temperature (PVT) 下達到 LC VCO 的起震條件</p>
-                        <center><p>\( g_mR_P>2 \)</p></center>
-                        <p>通常 worse corner 發生會在 SS corner，也就是 \( g_m \) 最小的情況下。</p>
-                        <p>對一個沒有 Tail Current 的 PN Pair LC VCO 來說，通常中心 bias 點位於 \( V_{DD}/2 \) 的位置，若 LDO 輸出為一個不隨 PVT 改變的定電壓，則 PN Pair 的電流由 Process 和 Temperature 決定，其中 Temperature 和 Mobility \( \mu \) 有關，Process 和 \( g_m \) 有關，在 SS corner 下，\( V_{th} \) 較大，\( V_{ov} \) 較小，\( g_m \) 較小，起震較困難。</p>
-                        <p>若 LDO 的 Reference Voltage 由絕對外灌電流 \( I_{BX} \) 和 PN Diode Connected組成，則產生的 Reference Voltage 可 PVT Tracking，PN Pair 的電流由 \( I_{BX} \) 決定，\( g_m \) 則只和 \( \mu \) 有關，不隨 Process 和 Voltage 影響，起震條件穩定。</p>
-                        <center><p>\( g_mR = \sqrt{2\mu C_{ox} \frac{W}{L}I_D}\propto\sqrt{\mu} \)</p></center>
+                        <p>Jitter 和 Phase Noise 有下列的直接對應關係:</p>
+                        <center><p>\( Jitter (sec)=\frac{\sqrt{2\int^{f_0}_{BW}L(f)df}}{2\pi f_0} \)</p></center>
+                        <p>其中，\(f_0\) 為訊號震盪頻率，\(L(f)\) 為 Phase Noise Power，\(BW\) 為 PLL 或 CDR 的 Bandwidth。</p>
+                        <p>若我們考慮一個 Phase Noise 為 \(L(f)\) 的 Clock 訊號 \(CLK\)，經過一個無雜訊的二倍除頻器，其輸出為 \(CLK_{DIV2}\)，則由於除頻器不貢獻額外 Jitter，且震盪頻率變為原來的一半，故 \(CLK_{DIV2}\) 的 Phase Noise Power \(L_{DIV2}(f)\) 為 \(CLK\) Phase Noise 的 \(1/4\)，也就是相差 -6dB。</p>
+                        <center><p>\(L_{DIV2}(f)=L(f)-6dB\)</p></center>
+                        <a href="#!"><img class="img-fluid" src="../assets/img/VCO/Phase_Noise_-6dB_20250815.png" alt="..." /></a>
+                        <span class="caption text-muted">Fig. 1. Phase noise of divided clock is 6dB below original clock</span>
+                        <p>從圖像的角度來思考，如 Fig. 1 所示，當 Clock 週期變為原本的兩倍，但 Jitter 不變時，Phase Noise Amplitude 會變為原本的 \(1/2\)，Phase Noise Power 則變為原本的 \(1/4\)，和上述分析吻合。</p>
+                        <p>通常要計算一個頻率為 \(f_0\) 訊號的 Jitter，我們會從 PLL/CDR 的頻寬積到 \(f_0\)，上述分析如若考慮到積分帶寬，則除頻器輸出在高頻處的 Phase Noise Power 不再是原本訊號的 \(1/4\)，而是 \(1/2\)，也就是 -3dB，我們可以用下列式子來分析:</p>
+                        <center><p>\(Jitter_{CLK}=\frac{\sqrt{\int^{f_0}_{BW} L(f)df}}{2\pi f_0}=Jitter_{CLK_{DIV2}}=\frac{\sqrt{\int^{{f_0}/2}_{BW} L_{DIV2}(f)df}}{2\pi f_0/2}\)</p></center>
+                        <p>若我們考慮 Noise Floor 的位置，並且假設 \(f_0/2\) 遠大於 Noise Floor 的 Corner Frequency，則由於兩者 Noise Floor 的 Integrated Jitter 相同，我們可以得到: </p>
+                        <center><p>\(\frac{f_0 L(f)}{f_0^2}=\frac{\frac{f_0}{2}L_{DIV2}(f)}{{(\frac{f_0}{2})}^2}\rightarrow L_{DIV2}(f)=\frac{1}{2}L(f)\)</p></center>
+                        <p>結論為，當我們要比較兩個不同頻段訊號的 Phase Noise 時，可以做以下比較:</p>
+                        <p><li>在 Noise Floor 以內的頻段:</li></p>
+                        <center><p>\(L_{DIV2}(f)=L(f)-6dB\)</p></center>
+                        <p><li>在 Noise Floor 以外的頻段:</li></p>
+                        <center><p>\(L_{DIV2}(f)=L(f)-3dB\)</p></center>
                     </div>
                 </div>
             </div>

@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="For Process and Voltage Tracking Oscillation Startup" />
+        <meta name="description" content="Ju Lee's Analog ICs - Categories" />
         <meta name="author" content="Ju Lee" />
-        <title>Ju Lee - LDO Reference Voltage for LC VCO</title>
+        <title>Others - Ju Lee's Blog</title>
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -48,17 +48,17 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('../assets/img/ldo.png')">
+        <header class="masthead" style="background-image: url('../assets/img/others.png')">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>LDO Reference Voltage for LC VCO</h1>
-                            <h2 class="subheading">For Process and Voltage Tracking</h2>
+                            <h1>Others</h1>
+                            <h2 class="subheading">Other Practical Issues</h2>
                             <span class="meta">
                                 Posted by
                                 <a href="../index.html">Ju Lee</a>
-                                on October 15, 2024
+                                on April 25, 2025
                             </span>
                         </div>
                     </div>
@@ -70,12 +70,20 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <p>為了在 Process Voltage Temperature (PVT) 下達到 LC VCO 的起震條件</p>
-                        <center><p>\( g_mR_P>2 \)</p></center>
-                        <p>通常 worse corner 發生會在 SS corner，也就是 \( g_m \) 最小的情況下。</p>
-                        <p>對一個沒有 Tail Current 的 PN Pair LC VCO 來說，通常中心 bias 點位於 \( V_{DD}/2 \) 的位置，若 LDO 輸出為一個不隨 PVT 改變的定電壓，則 PN Pair 的電流由 Process 和 Temperature 決定，其中 Temperature 和 Mobility \( \mu \) 有關，Process 和 \( g_m \) 有關，在 SS corner 下，\( V_{th} \) 較大，\( V_{ov} \) 較小，\( g_m \) 較小，起震較困難。</p>
-                        <p>若 LDO 的 Reference Voltage 由絕對外灌電流 \( I_{BX} \) 和 PN Diode Connected組成，則產生的 Reference Voltage 可 PVT Tracking，PN Pair 的電流由 \( I_{BX} \) 決定，\( g_m \) 則只和 \( \mu \) 有關，不隨 Process 和 Voltage 影響，起震條件穩定。</p>
-                        <center><p>\( g_mR = \sqrt{2\mu C_{ox} \frac{W}{L}I_D}\propto\sqrt{\mu} \)</p></center>
+                        <div class="post-preview">
+                            <a href="../category_others/background_current_calibration.html">
+                                <h2 class="post-title">Background Current Calibration</h2>
+                                <h3 class="post-subtitle">#Glitch</h3>
+                            </a>
+                            <p class="post-meta">
+                                Posted by
+                                <a href="../index.html">Ju Lee</a>
+                                on Apr 25, 2025
+                            </p>
+                        </div>
+                        <!-- Divider-->
+                        <hr class="my-4" /> 
+                          
                     </div>
                 </div>
             </div>
