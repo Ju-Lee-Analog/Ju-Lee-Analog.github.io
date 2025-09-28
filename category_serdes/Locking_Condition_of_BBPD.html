@@ -3,9 +3,9 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="Ju Lee's Analog ICs - Categories" />
+        <meta name="description" content="Jitter Peaking due to Non-ideal Clock Buffer" />
         <meta name="author" content="Ju Lee" />
-        <title>LDO Talks - Ju Lee's Blog</title>
+        <title>Ju Lee - Analysis of Bang-Band CDR (I)</title>
         <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -48,17 +48,17 @@
             </div>
         </nav>
         <!-- Page Header-->
-        <header class="masthead" style="background-image: url('../assets/img/ldo.png')">
+        <header class="masthead" style="background-image: url('../assets/img/serdes.png')">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
-                            <h1>LDO Talk</h1>
-                            <h2 class="subheading">Talks about Low Dropout Regulator</h2>
+                            <h1>Locking Condition of Bang-Bang Phase Detector (BBPD)</h1>
+                            <h2 class="subheading">Single Bit Response, BBPD</h2>
                             <span class="meta">
                                 Posted by
                                 <a href="../index.html">Ju Lee</a>
-                                on October 22, 2024
+                                on September 28, 2025
                             </span>
                         </div>
                     </div>
@@ -70,19 +70,25 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                        <div class="post-preview">
-                            <a href="../category_ldo/LDO_Reference_Voltage_for_LC_VCO.html">
-                                <h2 class="post-title">LDO Reference Voltage for LC VCO</h2>
-                                <h3 class="post-subtitle">#Start-up Condition #Process #Voltage #Tracking</h3>
-                            </a>
-                            <p class="post-meta">
-                                Posted by
-                                <a href="../index.html">Ju Lee</a>
-                                on Oct 15, 2024
-                            </p>
-                        </div>
-                        <!-- Divider-->
-                        <hr class="my-4" />    
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/BBPD_HR_20250928.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. Half-rate bang-bang phase deterctor (BBPD)</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/BBPD_HR_Operation_20250928.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 2. Half-rate bang-bang phase detector operation</span>
+                        
+                        <p>如Fig. 1 和 Fig. 2 所示，BBPD 的操作由三個 Sense Amplifier (SA1~SA3) 所組成，分別偵測 \(D[n]\), \(Edge[n]\), 以及 \(D[n+1]\)，當 Data Transition 發生時，即 \(D[n]\) 不等於 \(D[n+1]\)，此時若 \(Edge[n]\) 等於 \(D[n]\)，則表示 Clock leading，反之，若 \(Edge[n]\) 等於 \(D[n+1]\)，則表示 Clock lagging。</p>
+                        
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/SBR_Label_20250928.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 3. Single bit response example</span>
+                        
+                        <p>我們可以從如 Fig. 3 所示中的 Single Bit Response (SBR) 來推導 BBPD 的鎖定條件，假設有一序列的資料輸入 \(D[n]\)，則 CKQ (即 Edge) 所看到的電壓 \(Edge[n]\) 為 :</p>
+                        <p><center>\(Edge[n] = ...+D[n-1]H_{1.5}+D[n]H_{0.5}+D[n+1]H_{-0.5}+D[n+2]H_{-1.5}+...\)</center></p>
+                        <p>將 \(Edge[n]\) 與 \(D[n]\) 相乘 (\(XOR\))，可以得到 \(E_{Lead}[n]\)，由於資料輸入是隨機的，我們可以預期長時間下來 \(D[n]\) 的期望值為 0，且 BBPD 只有在 \(D[n]\) 不等於 \(D[n+1]\) 的時候反應 (即 \(D[n] \times D[n+1]=-1\))，我們可以推導 \(E_{Lead}[n]\) 的期望值 \(E\{E_{Lead}[n]\}\) :</p>
+                        <p><center>\(E\{E_{Lead}[n]\}=H_{0.5}-H_{-0.5}\)</center></p>
+                        <p>同樣，我們也可以將 \(Edge[n]\) 與 \(D[n+1]\) 相乘，可以得到 \(E_{Lag}[n]\)</p>
+                        <p><center> \(E\{E_{Lag}[n]\}=-H_{0.5}+H_{-0.5}\)</center></p>
+                        <p>當 BBPD 鎖定時，\(E\{E_{Lead}[n]\}=E\{E_{Lag}[n]\}\)，意即 :</p>
+                        <p><center> \(H_{0.5}=H_{-0.5}\)</center></p>
+                        <p>此即為 BBPD 的鎖定條件。</p>
                     </div>
                 </div>
             </div>
