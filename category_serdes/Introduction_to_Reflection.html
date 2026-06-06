@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Introduction to Different Types of Jitters" />
+        <meta name="author" content="Ju Lee" />
+        <title>Ju Lee - Introduction to Reflection</title>
+        <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../index.html">Ju Lee's Analog ICs</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../about.html">About</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-lg-3 py-3 py-lg-4" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Categories
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="../category_serdes/category_serdes.html">Serdes</a></li>
+                                <li><a class="dropdown-item" href="../category_vco/category_vco.html">VCO</a></li>
+                                <li><a class="dropdown-item" href="../category_ldo/category_ldo.html">LDO</a></li>
+                                <li><a class="dropdown-item" href="../category_adc/category_adc.html">ADC</a></li>
+                                <li><a class="dropdown-item" href="../category_others/category_others.html">Others</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('../assets/img/serdes.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Introduction to Reflection</h1>
+                            <h2 class="subheading">Transmission Line, Standing Wave, Reflection, Interference</h2>
+                            <span class="meta">
+                                Posted by
+                                <a href="../index.html">Ju Lee</a>
+                                on June 06, 2026
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <h2>Transmission Line</h2>
+                        <p>在傳統電子學的角度，我們假設電子的傳遞速度非常快 (和光速同量級)，所有的電流、電壓變化都會立即反應，但當訊號的頻率越來越高，比如 28GHz 的訊號，週期只有極短的 35.71ps，若導線的長度長到一定的程度，電子的傳遞所花費的時間就無法被忽略。</p>
+                        <p>舉例來說，若電子的傳遞速度為 0.3倍的光速 (即 0.3C)，當導線長度為 0.3212 公分時，訊號從導線的一端傳到另一端剛好需要一個 28GHz 的週期，意即當輸入端要打第二個週期訊號時，第一個週期訊號才剛好傳到導線的另一端，如 Fig. 1 所示，此處假設在輸出端沒有發生反射。</p>
+
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Transmission_Line_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 1. Transmission Line</span>
+
+                        <h2>Characteristic Impedance</h2>
+                        <p>特徵阻抗的物理意義為:</p>
+                        <p>當一個高頻訊號沿著傳輸線傳播時，訊號所看見的電壓波與電流波的比值，其公式為:</p>
+                        <center><p>\(Z_0=\sqrt{\frac{R+j\omega L}{G+j\omega C}}\)</p></center>
+                        <p>想像一條無限長的導線，當訊號走在導線上時，訊號每走一小段，就會對傳輸線上的單位電容充電，並在單位電感上產生電流，這兩種阻礙的合就是特徵阻抗，
+                            當訊號頻率極高的時候，電阻和電導的損耗可以忽略不計，公式可以簡化為:。</p>
+                        <center><p>\(Z_0=\sqrt{\frac{L}{C}}\)</p></center>
+                        <p>觀察公式可以發現，傳輸線的特徵阻抗由其幾何結構和介電材質決定:</p>
+                            <li>若傳輸線越接近地面，C 會上升，特徵阻抗越低</li>
+                            <li>若傳輸線越窄，L越大，C越小，特徵阻抗越高</li>
+                        <p></p>
+
+                        <h2>Reflection</h2>
+                        <p>現有一根繩子，繩子的一端繫於牆上，當我們手持另一端的繩頭甩出波型，此波在撞擊牆壁後會產生反射，反射波會傳回我們的手中，如 Fig. 2 所示。</p>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_Rope_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 2. Rope Reflection</span>
+                        <p>我們同樣可以預期，若當傳輸線的輸出端發生阻抗不匹配的時候，在輸出端同樣會發生反射，反射的訊號同樣會傳回輸入端，
+                            若輸入為一個週期性訊號，則此反射波會與輸入訊號發生週期性干涉。</p>
+                            
+                        
+                        
+                        <h2>Varaious Impedance Matching Condition</h2>
+                        <p>我們已經了解到當阻抗不匹配的時候，在介面處會發生反射，接下來我們討論，當儀器的輸出阻抗為 50\(\Omega\)，看見不同特徵阻抗的傳輸線，以及不同負載下，於輸入端和負載端看見的響應為何。</p>
+                        
+                        <h3>Loading is Open</h3>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_Loading_Open_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 3. Loading Open</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_InputAC_Loading_Open_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 4. Input Side AC Response, Loading Open</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_OutputAC_Loading_Open_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 5. Output Side AC Response, Loading Open</span>
+                        <p>如 Fig. 3 所示，假設有一 AC Voltage Source，其輸出阻抗為 50\(\Omega\)，緊接著一條 Delay 為 1/28GHz 的傳輸線，負載端為開路。</p>
+                        <p>此狀況的輸入端與輸出端響應如 Fig. 4、Fig. 5 所示，接下來討論此響應的原因。</p>
+                        <p>我們先觀察傳輸線和負載端的阻抗不匹配，訊號由輸入端開始，走過 1/28GHz 的 Delay 後來到負載端，由於負載開路，反射係數為 1，即為相位不反轉的反射，
+                            並且再走過 1/28GHz 的 Delay 回到輸入端，一共走了 1/14GHz。</p>
+                        <p>對不同特徵阻抗的傳輸線來說，輸入端的情況都一樣，看到同相，Delay 1/14GHz 的訊號</p>
+                        <li>對 7GHz 的訊號而言，1/14GHz 的 Delay 剛好是自己的半個週期，訊號回來後和自己原本的訊號為完全相消，故輸入端在 7GHz 處有嚴重 Notch。</li>
+                        <li>對 14GHz 的訊號而言，1/14GHz 的 Delay 剛好是自己的一週期，訊號回來後和自己原本的訊號為完全相加，故輸入端在 14GHz 處有 Peaking。</li>
+                        <li>其餘頻率的絕對值大小，由輸入端的阻抗不匹配決定，特徵阻抗越大，其電阻分壓越大，故 \(80\Omega > 50\Omega > 30\Omega \)。</li>
+                        <p>輸出端的訊號會經過 1/28GHz 的 Delay 回到輸入端，若傳輸線和儀器的輸出阻抗 50\(\Omega\) 不匹配，會發生二次反射，
+                            以傳輸線特徵阻抗 80\(\Omega\) 為例，輸入端二次反射的反射係數為 \(\frac{50-80}{50+80}\)，即為相位反轉的反射，
+                            再經過 1/28GHz 的 Delay 回到輸出端，一共走了 1/14GHz，並且相位反轉。</p>
+                        <li>對 7GHz 的訊號而言，1/14GHz 的 Delay 加上相位反轉，恰好和原本的輸出訊號完全相加，故輸出端在 7GHz 處有嚴重 Peaking。</li>
+                        <li>對 14GHz 的訊號而言，1/14GHz 的 Delay 加上相位反轉，恰好和原本的輸出訊號完全相消，故輸出端在 14GHz 處有嚴重 Notch。</li>
+
+                        <p>同理，若傳輸線的特徵阻抗為 50\(\Omega\)，則因為不會有二次反射，在輸出端沒有 Notch 及 Peaking。</p>
+                        <p>若傳輸線特徵阻抗為 30\(\Omega\)，則二次反射的反射係數為 \(\frac{50-30}{50+30}\)，即為相位不反轉的反射，故在 7GHz 處有 Notch，14GHz 處有 Peaking。</p>
+
+                        
+                        <h3>Loading is 30\(\Omega\)</h3>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_Loading_30_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 6. Loading 30\(\Omega\)</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_InputAC_Loading_30_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 7. Input Side AC Response, Loading 30\(\Omega\)</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_OutputAC_Loading_30_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 8. Output Side AC Response, Loading 30\(\Omega\)</span>
+                        <p>如 Fig. 6 所示，假設有一 AC Voltage Source，其輸出阻抗為 50\(\Omega\)，緊接著一條 Delay 為 1/28GHz 的傳輸線，負載端為 30\(\Omega\)。</p>
+                        <p>此狀況的輸入端與輸出端響應如 Fig. 7、Fig. 8 所示，接下來討論此響應的原因。</p>
+                        <p>我們先觀察傳輸線和負載端的阻抗不匹配，訊號由輸入端開始，走過 1/28GHz 的 Delay 後來到負載端，由於負載為 30\(\Omega\)，
+                            除了傳輸線特徵阻抗為 30\(\Omega\) 為不反射外，其餘的反射係數皆為負，即為相位反轉的反射，
+                            並且再走過 1/28GHz 的 Delay 回到輸入端，一共走了 1/14GHz，相位反轉一次。</p>
+                        <p>對 50\(\Omega\) 和 80\(\Omega\) 的傳輸線來說，輸入端的情況都一樣，看到反相，Delay 1/14GHz 的訊號</p>
+                        <li>對 7GHz 的訊號而言，1/14GHz 的 Delay 加上相位反轉，恰好和原本的輸出訊號完全相加，故輸入端在 7GHz 處有嚴重 Peaking。</li>
+                        <li>對 14GHz 的訊號而言，1/14GHz 的 Delay 加上相位反轉，恰好和原本的輸出訊號完全相消，故輸入端在 14GHz 處有嚴重 Notch。</li>
+                        <p>對 30\(\Omega\) 傳輸線而言，訊號在負載端被全吸收，故沒有訊號反射回輸入端，輸入端的頻率響與頻率無關，即水平線。</p>
+
+                        <p>輸出端以 80\(\Omega\) 為例，在輸出端的反射係數為 \(\frac{30-80}{30+80}\)，即為相位反轉的反射，
+                            反射後會經過 1/28GHz 的 Delay 回到輸入端，發生二次反射，反射係數為 \(\frac{50-80}{50+80}\)，即為相位反轉的反射，
+                            再經過 1/28GHz 的 Delay 回到輸出端，一共走了 1/14GHz，並且相位反轉兩次。</p>
+                        <li>對 7GHz 的訊號而言，1/14GHz 的 Delay 加上兩次相位反轉，恰好和原本的輸出訊號完全相消，故輸出端在 7GHz 處有 Notch。</li>
+                        <li>對 14GHz 的訊號而言，1/14GHz 的 Delay 加上兩次相位反轉，恰好和原本的輸出訊號完全相加，故輸出端在 14GHz 處有 Peaking。</li>
+
+                        <p>輸出端以 50\(\Omega\) 為例，在輸出端的反射係數為 \(\frac{30-50}{30+50}\)，即為相位反轉的反射，
+                            反射後會經過 1/28GHz 的 Delay 回到輸入端，因和儀器的輸出阻抗完全匹配，故沒有發生二次反射，沒有反射訊號回到輸出端，
+                            因此輸出端的頻率響應和頻率無關，即水平線。</p>
+                        <p>輸出端以 30\(\Omega\) 為例，在輸出端阻抗匹配，為完全吸收，故頻率響應亦為水平線。</p>
+                        <p>可以注意，不管是 80\(\Omega\) 的 Peaking 位置，或是 30\(\Omega\)、50\(\Omega\) 阻抗匹配的情況，由於能量皆完整儲存於傳輸線與負載上，
+                            故 Gain 為簡單的儀器阻抗 50\(\Omega\) 與負載阻抗 30\(\Omega\) 的電阻分壓:</p>
+                        <center><p>\(Gain=20\times log(2\times\frac{30}{30+50})=-2.49877dB\)</p></center>
+
+
+                        <h3>Loading is 50\(\Omega\)</h3>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_Loading_50_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 9. Loading 50\(\Omega\)</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_InputAC_Loading_50_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 10. Input Side AC Response, Loading 50\(\Omega\)</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_OutputAC_Loading_50_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 11. Output Side AC Response, Loading 50\(\Omega\)</span>
+                        <p>如 Fig. 9 所示，假設有一 AC Voltage Source，其輸出阻抗為 50\(\Omega\)，緊接著一條 Delay 為 1/28GHz 的傳輸線，負載端為 50\(\Omega\)。</p>
+                        <p>此狀況的輸入端與輸出端響應如 Fig. 10、Fig. 11 所示，接下來討論此響應的原因。</p>
+                        <p>我們先觀察傳輸線和負載端的阻抗不匹配，訊號由輸入端開始，走過 1/28GHz 的 Delay 後來到負載端，由於負載為 50\(\Omega\)，
+                            傳輸線特徵阻抗為 50\(\Omega\) 為不反射，傳輸線特徵阻抗為 80\(\Omega\) 反射係數為負，即為相位反轉的反射， 30\(\Omega\) 的傳輸線則為相位不反轉的反射
+                            並且再走過 1/28GHz 的 Delay 回到輸入端，一共走了 1/14GHz。</p>
+                        <p>對 80\(\Omega\) 的傳輸線來說，輸入端看到反相，Delay 1/14GHz 的訊號</p>
+                        <li>對 7GHz 的訊號而言，1/14GHz 的 Delay 加上相位反轉，恰好和原本的輸出訊號完全相加，故輸入端在 7GHz 處有嚴重 Peaking。</li>
+                        <li>對 14GHz 的訊號而言，1/14GHz 的 Delay 加上相位反轉，恰好和原本的輸出訊號完全相消，故輸入端在 14GHz 處有嚴重 Notch。</li>
+                        <p>對 50\(\Omega\) 傳輸線而言，訊號在負載端被全吸收，故沒有訊號反射回輸入端，輸入端的頻率響與頻率無關，即水平線。</p>
+                        <p>對 30\(\Omega\) 的傳輸線來說，輸入端看到同相，Delay 1/14GHz 的訊號</p>
+                        <li>對 7GHz 的訊號而言，1/14GHz 的 Delay 加上相位反轉，恰好和原本的輸出訊號完全相加，故輸入端在 7GHz 處有嚴重 Notch。</li>
+                        <li>對 14GHz 的訊號而言，1/14GHz 的 Delay 加上相位反轉，恰好和原本的輸出訊號完全相消，故輸入端在 14GHz 處有嚴重 Peaking。</li>
+
+                        <p>輸出端以 80\(\Omega\) 為例，在輸出端的反射係數為 \(\frac{50-80}{50+80}\)，即為相位反轉的反射，
+                            反射後會經過 1/28GHz 的 Delay 回到輸入端，發生二次反射，反射係數為 \(\frac{50-80}{50+80}\)，即為相位反轉的反射，
+                            再經過 1/28GHz 的 Delay 回到輸出端，一共走了 1/14GHz，並且相位反轉兩次。</p>
+                        <li>對 7GHz 的訊號而言，1/14GHz 的 Delay 加上兩次相位反轉，恰好和原本的輸出訊號完全相消，故輸出端在 7GHz 處有 Notch。</li>
+                        <li>對 14GHz 的訊號而言，1/14GHz 的 Delay 加上兩次相位反轉，恰好和原本的輸出訊號完全相加，故輸出端在 14GHz 處有 Peaking。</li>
+
+                        <p>輸出端以 30\(\Omega\) 為例，在輸出端的反射係數為 \(\frac{50-30}{50+30}\)，即為相位不反轉的反射，
+                            反射後會經過 1/28GHz 的 Delay 回到輸入端，發生二次反射，反射係數為 \(\frac{50-30}{50+30}\)，即為相位不反轉的反射，
+                            再經過 1/28GHz 的 Delay 回到輸出端，一共走了 1/14GHz，並且相位不反轉。</p>
+                        <li>對 7GHz 的訊號而言，同相位 1/14GHz 的 Delay，恰好和原本的輸出訊號完全相消，故輸出端在 7GHz 處有 Notch。</li>
+                        <li>對 14GHz 的訊號而言，同相位 1/14GHz 的 Delay，恰好和原本的輸出訊號完全相加，故輸出端在 14GHz 處有 Peaking。</li>
+                        <p>輸出端以 50\(\Omega\) 為例，在輸出端阻抗匹配，為完全吸收，故頻率響應為水平線。</p>
+                        <p>值得注意的是，雖然 30\(\Omega\)、80\(\Omega\) 同為相消干涉，但因為 30\(\Omega\) 的反射係數大於 80\(\Omega\)，故 30\(\Omega\) 的 Notch Gain 更低。</p>
+                        
+
+
+                        <h3>Loading is 80\(\Omega\)</h3>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_Loading_80_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 12. Loading 80\(\Omega\)</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_InputAC_Loading_80_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 13. Input Side AC Response, Loading 80\(\Omega\)</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_OutputAC_Loading_80_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 14. Output Side AC Response, Loading 80\(\Omega\)</span>
+                        <p>如 Fig. 12 所示，假設有一 AC Voltage Source，其輸出阻抗為 50\(\Omega\)，緊接著一條 Delay 為 1/28GHz 的傳輸線，負載端為 80\(\Omega\)。</p>
+                        <p>此狀況的輸入端與輸出端響應如 Fig. 13、Fig. 14 所示，接下來討論此響應的原因。</p>
+                        <p>我們先觀察傳輸線和負載端的阻抗不匹配，訊號由輸入端開始，走過 1/28GHz 的 Delay 後來到負載端，由於負載為 80\(\Omega\)，
+                            傳輸線特徵阻抗為 80\(\Omega\) 為不反射，其餘不論是 30\(\Omega\) 或是 50\(\Omega\) 的傳輸線，反射係數為正，即為相位不反轉的反射
+                            ，並且再走過 1/28GHz 的 Delay 回到輸入端，一共走了 1/14GHz。</p>
+                        <p>對 30\(\Omega\) 或 80\(\Omega\) 的傳輸線來說，輸入端看到同相，Delay 1/14GHz 的訊號</p>
+                        <li>對 7GHz 的訊號而言，同相 1/14GHz 的 Delay，恰好和原本的輸出訊號完全相消，故輸入端在 7GHz 處有嚴重 Notch。</li>
+                        <li>對 14GHz 的訊號而言，同相 1/14GHz 的 Delay，恰好和原本的輸出訊號完全相加，故輸入端在 14GHz 處有嚴重 Peaking。</li>
+                        <p>對 80\(\Omega\) 傳輸線而言，訊號在負載端被全吸收，故沒有訊號反射回輸入端，輸入端的頻率響與頻率無關，即水平線。</p>
+                        <p>注意，因為 30\(\Omega\) 的反射係數大於 50\(\Omega\)，故 30\(\Omega\) 的 Peaking 和 Notch 更嚴重</p>
+
+                        <p>輸出端以 80\(\Omega\) 為例，在輸出端阻抗匹配，為完全吸收，故頻率響應為水平線。</p>
+                        <p>輸出端以 50\(\Omega\) 為例，在輸出端的反射係數為 \(\frac{80-50}{80+50}\)，即為相位不反轉的反射，
+                            反射後會經過 1/28GHz 的 Delay 回到輸入端，和儀器的 50\(\Omega\) 完全匹配，沒有二次反射，故輸出端的頻率響應和頻率無關，為水平線。</p>
+                        
+                        <p>輸出端以 30\(\Omega\) 為例，在輸出端的反射係數為 \(\frac{80-30}{80+30}\)，即為相位不反轉的反射，
+                            ，走過 1/28GHz 的 Delay 回到輸入端，發生二次反射，反射係數為 \(\frac{50-30}{50+30}\)，為相位不反轉的反射，
+                            並再走過 1/28GHz 的 Delay 回到輸出端，一共走了 1/14GHz，並且相位不反轉。</p>
+                        <li>對 7GHz 的訊號而言，同相位 1/14GHz 的 Delay，恰好和原本的輸出訊號完全相消，故輸出端在 7GHz 處有 Notch。</li>
+                        <li>對 14GHz 的訊號而言，同相位 1/14GHz 的 Delay，恰好和原本的輸出訊號完全相加，故輸出端在 14GHz 處有 Peaking。</li>
+                        <p></p>
+
+                        <h3>Loading is Short</h3>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_Loading_Short_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 14. Loading Short</span>
+                        <center><a href="#!"><img class="img-fluid" src="../assets/img/Serdes/Reflection_InputAC_Loading_Short_20260606.png" alt="..." /></a></center>
+                        <span class="caption text-muted">Fig. 15. Input Side AC Response, Loading Short</span>
+                        <p>如 Fig. 14 所示，假設有一 AC Voltage Source，其輸出阻抗為 50\(\Omega\)，緊接著一條 Delay 為 1/28GHz 的傳輸線，負載端為接地。</p>
+                        <p>此狀況的輸入端響應如 Fig. 15 所示，接下來討論此響應的原因。</p>
+                        <p>我們先觀察傳輸線和負載端的阻抗不匹配，訊號由輸入端開始，走過 1/28GHz 的 Delay 後來到負載端，由於負載為接地，
+                            不論特徵阻抗為何，皆為全反射，相位反轉的反射，並且再走過 1/28GHz 的 Delay 回到輸入端，一共走了 1/14GHz，相位反轉一次。</p>
+                        <li>對 7GHz 的訊號而言，1/14GHz 的 Delay，相位反轉一次，恰好和原本的輸出訊號完全相加，故輸入端在 7GHz 處有嚴重 Peaking。</li>
+                        <li>對 14GHz 的訊號而言，1/14GHz 的 Delay，相位反轉一次，恰好和原本的輸出訊號完全相消，故輸入端在 14GHz 處有嚴重 Notch。</li>
+                        <p>注意，在 Peaking 時因為全反射，故所有能量皆返回輸入端，此時的增益即為輸入訊號 2。</p>
+
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://www.instagram.com/hung_ju_0.0/" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://www.facebook.com/leo2012621" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/Ju-Lee-Analog" target="_blank">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; Analog Integrated Circuit - Ju Lee's Blog 2026</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
